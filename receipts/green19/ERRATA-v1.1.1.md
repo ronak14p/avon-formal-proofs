@@ -1,0 +1,3 @@
+# Erratum to `RECEIPT.md` (added in release v1.1.1-green19-v3, Nov 27, 2026)
+
+`RECEIPT.md` in this folder says the two `partial ... _unsafe_rec` entries are auxiliaries that Lean generates for two `def`s "defined by well-founded recursion". That is inaccurate: `iterStepR` and `boundM` are defined by structural recursion on `ℕ` (compiled via `Nat.brecOn`). The conclusion is unchanged: none of the 576 local constants of the standalone module refers to either `_unsafe_rec` auxiliary, and every theorem depends only on `propext`, `Classical.choice`, `Quot.sound`. `RECEIPT.md` itself is left unchanged because its SHA-256 is listed in `SHA256SUMS.txt` and in release v1.1.0-green19. Version 3 of the note (Section 5) states this correctly.

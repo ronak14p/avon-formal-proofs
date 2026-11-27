@@ -48,3 +48,6 @@ c47c6e942231a9adfca816e3a7f8df8a49ec98febeedabfcd95a7c203c438c8d  receipts/const
 6ff29e6b65f77c3cb43a2070f15c5935f099a2c0632a8efe95568d6bbe2ddbdc  receipts/constant1a-sidon/RECEIPT.md
 48ac519e0abd0683645c37ce400fe65dabe83f79818f3d1513490a8018bf4aba  receipts/constant1a-sidon/recheck_certificate.txt
 bd7377ac203d706c65693567921d53047a6652128b0a0b5db5b6d822419625ea  receipts/constant1a-sidon/strip_scan.txt
+fe80c7dbe7ec3d2980d9454b9638f9eb58ab3c320f40a3ea5be9a02ae35cbccd  paper/Kernel-Checked-Green-Problem-19-2026-11-27-v3.pdf
+cd4cee6187a1c60cd7e6a97f47078a2d45576009419e3bdd3d2fcbae5e87e99c  paper/Kernel-Checked-Green-Problem-19-2026-11-27-v3.tex
+efe105599ee5b59c6d11018e8077daefface0de4a6c1607b7071db0a9a7ad314  receipts/green19/ERRATA-v1.1.1.md

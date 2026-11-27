@@ -1,0 +1,421 @@
+\documentclass[11pt,reqno]{amsart}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{fancyvrb}
+\usepackage[colorlinks=true,linkcolor=blue!60!black,citecolor=blue!60!black,urlcolor=blue!60!black]{hyperref}
+
+\setlength{\textwidth}{6.2in}
+\setlength{\oddsidemargin}{0.15in}
+\setlength{\evensidemargin}{0.15in}
+\setlength{\topmargin}{-0.1in}
+\setlength{\textheight}{8.6in}
+\setlength{\emergencystretch}{6em}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\LeanUS}{\textunderscore\hspace{0pt}}
+\newcommand{\lean}[1]{{\let\_\LeanUS\texttt{#1}}}
+\newcommand{\doi}[1]{\href{https://doi.org/#1}{doi:\nolinkurl{#1}}}
+
+\hypersetup{pdfauthor={Ronak Patel (Avon Labs)},pdftitle={A Kernel-Checked Lean 4 Formalization of the Popular-Corner Exponent C=4 in F\string_2\string^n x F\string_2\string^n (Ben Green's Open Problem 19)}}
+\definecolor{codebg}{RGB}{247,247,249}
+\definecolor{codeframe}{RGB}{215,218,224}
+
+\DefineVerbatimEnvironment{leancode}{Verbatim}{
+  fontsize=\small,
+  frame=single,
+  rulecolor=\color{codeframe},
+  framesep=6pt,
+  commandchars=\\\{\}
+}
+
+\title[Kernel-Checked Lean 4 Formalization of Green's Problem 19]{A Kernel-Checked Lean 4 Formalization of the Popular-Corner Exponent $C = 4$ in $\F_2^n \times \F_2^n$ (Ben Green's Open Problem 19)}
+
+\author{Ronak Patel (Avon Labs)}
+\date{November 27, 2026 (Version 3)}
+\subjclass[2020]{Primary 05D10, 11B30; Secondary 68V20}
+\keywords{corners theorem, popular differences, triforce, Ruzsa--Szemer\'edi, Behrend, Lean 4, Mathlib, formal verification}
+
+\begin{document}
+
+\begin{abstract}
+Problem 19 of Ben Green's list of 100 open problems asks for the infimum $C$ of the exponents $c$ for which, uniformly in $0 < \alpha < 1$ and for all sufficiently large $n$, every subset $A \subseteq \F_2^n \times \F_2^n$ of density at least $\alpha$ admits a nonzero difference $d$ shared by $\gg \alpha^c N^2$ corners $(x, y), (x + d, y), (x, y + d)$, where $N = 2^n$. Mandache showed $3.13 \le C \le 4$, and Fox, Sah, Sawhney, Stoner, and Zhao showed $C = 4$. The mathematics is theirs. We report a self-contained Lean~4 / Mathlib formalization (\lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}standalone.\allowbreak{}lean}, 6,975 lines, \lean{import Mathlib} only) of the exact characterization ``$c$ is a valid exponent if and only if $c \ge 4$'', establishing in particular that the set of valid exponents is $[4, \infty)$ (nonempty and bounded below) and hence proving the statement \lean{Green19.\allowbreak{}green\_19 : C = 4} of the \lean{formal-conjectures} repository, where its proof is currently \lean{sorry}. A second bridge file (\lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}lean}, 7,001 lines) imports that upstream module and certifies, via definitional equalities (\lean{rfl}) and \lean{type\_of\%}, that the three proved theorems (\lean{green\_19}, \lean{green\_19.\allowbreak{}lower}, \lean{green\_19.\allowbreak{}upper}) match the upstream declarations identically; we also compare their elaborated terms. Both files compile cleanly under Lean~4.33.1 using only the standard axioms \lean{propext}, \lean{Classical.\allowbreak{}choice}, and \lean{Quot.\allowbreak{}sound}. The Lean source was produced by AI agents and has not been read line by line by a human; this note describes the formalized proof route, the verification receipt, and the limits of what was checked.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}\label{sec:intro}
+
+Let $G = \F_2^n$ and $N = |G| = 2^n$. For $A \subseteq G \times G$ and $d \in G$, put
+\[
+  S_d(A) = \{(x, y) \in G \times G : (x, y), (x + d, y), (x, y + d) \in A\},
+\]
+the set of corners of $A$ with common difference $d$. Problem~19 in Green's collection~\cite{Green} asks: what is $C$, the infimum of all exponents $c$ for which the following holds uniformly in $0 < \alpha < 1$: for all sufficiently large $n$, if $A \subseteq \F_2^n \times \F_2^n$ has density at least $\alpha$, then there is some $d \neq 0$ with $|S_d(A)| \gg \alpha^c N^2$? The collection now marks the problem as solved; Green notes that Chu~\cite{Chu} had observed in an ergodic-theoretic setting that the exponent cannot be~$3$. Mandache~\cite{Mandache} proved $3.13 \le C \le 4$ by relating the problem to an extremal problem for random variables (equivalently, for triforce densities of $[0, 1]$-valued kernels). Fox, Sah, Sawhney, Stoner, and Zhao~\cite{FSSSZ} determined the extremal popular-corner density up to $\alpha^{o(1)}$ factors---showing that it is $\alpha^{4 - o(1)}$ and $\omega(\alpha^4)$ as $\alpha \to 0^+$ (writing $\delta$ for the set density $\alpha$)---and thereby deduced $C = 4$.
+
+The \lean{formal-conjectures} repository~\cite{FC} states the problem as the Lean~4 theorem \lean{Green19.\allowbreak{}\allowbreak green\_19 : C = 4} (together with the two consequences \lean{green\_19.\allowbreak{}lower : C >= 3.13} and \lean{green\_19.\allowbreak{}upper : C <= 4}), tagged as solved in the literature (\lean{@[category research solved]}) but with the proof of \lean{green\_19} left as \lean{sorry}. This note reports a machine-checked \emph{formal proof} of those statements, not new mathematics. Section~\ref{sec:statement} reproduces the upstream formal statement and explains how its quantifiers and conventions read; Section~\ref{sec:math} describes the proof route as formalized; Section~\ref{sec:scope} states precisely what is and is not claimed; Section~\ref{sec:receipt} presents the verification receipt; Section~\ref{sec:repro} gives exact reproduction commands; and Sections~\ref{sec:process} and~\ref{sec:limits} record how the artifact was produced and its limitations.
+
+\section{The formal statement}\label{sec:statement}
+
+The following listing reproduces the core declarations of \lean{FormalConjectures/\allowbreak{}\allowbreak GreensOpenProblems/\allowbreak{}\allowbreak 19.\allowbreak{}lean} at commit \lean{9097e2f9} (unchanged on the repository's \lean{main} branch as of November~27, 2026), with intermediate docstrings and the \lean{section GroupDefs} wrapper abridged for brevity; the upstream file is the authority.
+
+\begin{leancode}
+open Finset Real
+namespace Green19
+
+variable \{G : Type*\} [AddCommGroup G] [Fintype G] [DecidableEq G]
+
+\textit{/-- A corner in $A$ with common difference $d$ [FSS20]. -/}
+def IsCorner (A : Finset (G \(\times\) G)) (x y d : G) : Prop :=
+  (x, y) \(\in\) A \(\land\) (x + d, y) \(\in\) A \(\land\) (x, y + d) \(\in\) A
+
+noncomputable def S (d : G) (A : Finset (G \(\times\) G)) : Finset (G \(\times\) G) :=
+  open scoped Classical in
+  univ.filter (fun p => IsCorner A p.1 p.2 d)
+
+def ValidExponent (c : \(\R\)) : Prop :=
+  \(\exists\) K > 0,
+    \(\forall\) \(\alpha\), 0 < \(\alpha\) \(\to\) \(\alpha\) < 1 \(\to\)
+      \(\forall\sp{\mathrm{f}}\) n in Filter.atTop,
+        \(\forall\) A : Finset (\(\F\sb{2}\) n \(\times\) \(\F\sb{2}\) n),
+          let N : \(\R\) := (Fintype.card (\(\F\sb{2}\) n) : \(\R\))
+          (A.card : \(\R\)) \(\ge\) \(\alpha\) * N^2 \(\to\)
+          \(\exists\) d : \(\F\sb{2}\) n, d \(\neq\) 0 \(\land\) ((S d A).card : \(\R\)) \(\ge\) K * \(\alpha\)^c * N^2
+
+\textit{/-- The infimum of all valid exponents [Gr26]. -/}
+noncomputable def C : \(\R\) := sInf \{c | ValidExponent c\}
+
+@[category research solved, AMS 5 11]
+theorem green_19 : C = 4 := by
+  sorry
+
+@[category research solved, AMS 5 11]
+theorem green_19.lower : C >= 3.13 := by
+  rw [green_19]
+  norm_num
+
+@[category research solved, AMS 5 11]
+theorem green_19.upper : C <= 4 := by
+  rw [green_19]
+\end{leancode}
+
+Here \lean{$\F$ p n} and \lean{$\F_2$ n} are \lean{abbrev}s defined upstream in \lean{FormalConjecturesForMathlib/\allowbreak{}\allowbreak Data/\allowbreak{}\allowbreak ZMod/\allowbreak{}\allowbreak Fp.\allowbreak{}lean} (imported through \lean{FormalConjecturesUtil}): \lean{$\F$ p n} is the function type \lean{Fin n -> ZMod p}, and \lean{$\F_2$ n} is \lean{$\F$ 2 n}. We record four points on how this formalization reads; each is verified mechanically in Section~\ref{sec:receipt}.
+
+\begin{enumerate}[label=(\alph*),leftmargin=2em]
+\item \emph{Order of quantifiers.} The constant $K > 0$ is chosen before $\alpha$, so $K$ is uniform across all $\alpha \in (0, 1)$. For each fixed $\alpha$, the conclusion is required only for all sufficiently large~$n$ (\lean{Filter.\allowbreak{}Eventually} along \lean{Filter.\allowbreak{}atTop}); the threshold $n_0(\alpha)$ may depend on~$\alpha$. This matches the reading of ``$n$ sufficiently large'' in~\cite{Mandache,FSSSZ} and is essential: for $n = 0$ the group $\F_2^0$ has no nonzero element, and for fixed $n \ge 1$ and $\alpha \le 4^{-n}$ a singleton subset has density $\ge \alpha$ with no corners of nonzero difference.
+\item \emph{Density and real powers.} Here $N$ is the cardinality of $\F_2^n$ cast to $\R$ (equal to $2^n$), the density hypothesis is $|A| \ge \alpha N^2$, and $\alpha^{c}$ denotes real exponentiation (\lean{Real.\allowbreak{}rpow : $\R \to \R \to \R$}), which is well-defined and strictly positive for every $\alpha \in (0, 1)$ and every $c \in \R$ (including $c \le 0$).
+\item \emph{The difference and corner set.} A nonzero shift $d \neq 0$ is required, and $S_d(A)$ is a \lean{Finset (G $\times$ G)} formed by filtering \lean{Finset.\allowbreak{}univ} with the classical decidability instance (\lean{open scoped Classical}), so \lean{((S d A).card : $\R$)} is its exact finite cardinality cast to~$\R$.
+\item \emph{Non-degeneracy of the infimum.} The constant \lean{C := sInf \{c | ValidExponent c\}} uses Mathlib's conditionally complete lattice infimum \lean{sInf} on $\R$, which returns the junk value~$0$ if a set is empty or unbounded below. A proof of \lean{C = 4} is therefore mathematically meaningful only because the set of valid exponents is both nonempty and bounded below; Section~\ref{sec:math} establishes the exact equality $\{c \in \R : \mathrm{ValidExponent}\ c\} = [4, \infty)$.
+\end{enumerate}
+
+Green's manuscript~\cite{Green} writes ``$A \subset \F_2^n$'', evidently a typographical slip, as the same sentence asks for $\gg \alpha^c N^2$ corners $(x, y), (x, y + d), (x + d, y)$; the upstream docstring, the formal statement, and~\cite{Mandache,FSSSZ} all use $A \subseteq \F_2^n \times \F_2^n$.
+
+\section{The mathematics as formalized}\label{sec:math}
+
+All line numbers in this section refer to the standalone file \lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}\allowbreak standalone.\allowbreak{}lean} (the bridge file \lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}lean} contains the identical proof body shifted by $-15$ lines inside \lean{namespace StandaloneGreen19}).
+
+\subsection{Main theorem and reduction of \texorpdfstring{$C = 4$}{C = 4}}
+
+\begin{theorem}[\lean{validExponent\_iff}, l.~6815; \lean{green\_19}, l.~6823]\label{thm:main}
+For every $c \in \R$, $c$ is a valid exponent if and only if $c \ge 4$. Consequently $\{c \in \R : \mathrm{ValidExponent}\ c\} = [4, \infty)$ and $C = 4$; in particular, the infimum is attained.
+\end{theorem}
+
+The Lean proof is (one docstring line wrapped to fit the page):
+
+\begin{leancode}
+\textit{/-- Exact characterization of valid exponents for Green's Open Problem 19. -/}
+theorem validExponent_iff (c : \(\R\)) : ValidExponent c \(\leftrightarrow\) 4 \(\le\) c := by
+  constructor
+  \(\cdot\) intro hv
+    by_contra! hlt
+    exact not_validExponent_of_lt_four hlt hv
+  \(\cdot\) exact validExponent_of_ge_four
+
+\textit{/-- Ben Green's Open Problem 19, solved by Mandache and}
+\textit{    Fox-Sah-Sawhney-Stoner-Zhao: `C = 4`. -/}
+theorem green_19 : C = 4 := by
+  have hset : \{c : \(\R\) | ValidExponent c\} = Set.Ici 4 := by
+    ext c
+    exact validExponent_iff c
+  dsimp [C]
+  rw [hset, csInf_Ici]
+\end{leancode}
+
+The sufficiency direction ($c \ge 4 \Rightarrow \mathrm{ValidExponent}\ c$) is Proposition~\ref{prop:upper}; the necessity direction ($c < 4 \Rightarrow \neg\,\mathrm{ValidExponent}\ c$) is Proposition~\ref{prop:lower}. Because both directions are proved, the set of valid exponents is \lean{Set.\allowbreak{}Ici 4} ($[4, \infty)$), which is nonempty (containing~$4$) and bounded below (by~$4$), so \lean{sInf} evaluates via \lean{csInf\_Ici} to the genuine minimum~$4$ rather than a junk value. This is witnessed both by the local equality \lean{hset} inside \lean{green\_19} and by the external audit theorems \lean{audit\_valid\_set\_eq} and \lean{audit\_isLeast} compiled in the verification footer (Section~\ref{sec:receipt}). The corollaries \lean{green\_19.\allowbreak{}lower} ($C \ge 3.13$, l.~6831) and \lean{green\_19.\allowbreak{}upper} ($C \le 4$, l.~6836) follow from \lean{green\_19} in two lines each.
+
+\subsection{Upper bound on \texorpdfstring{$C$}{C}: \texorpdfstring{$4$}{4} is a valid exponent}
+
+\begin{proposition}[\lean{popular\_corner\_f2\_pow\_four}, l.~4569; \lean{validExponent\_four}, l.~4798; \lean{validExponent\_\allowbreak of\_ge\_four}, l.~4808]\label{prop:upper}
+For every $0 < \alpha \le 1$ and $\varepsilon > 0$, for all sufficiently large $n$, every $A \subseteq \F_2^n \times \F_2^n$ with $|A| \ge \alpha N^2$ admits some $d \neq 0$ with $|S_d(A)| \ge (\alpha^4 - \varepsilon) N^2$. Setting $\varepsilon = \alpha^4 / 2$ yields \lean{ValidExponent 4} with uniform constant $K = \tfrac{1}{2}$, and monotonicity of $\alpha^c$ for $\alpha \in (0, 1)$ gives \lean{ValidExponent c} for every $c \ge 4$.
+\end{proposition}
+
+This is Mandache's theorem for $\F_2^n$~\cite{Mandache}. To avoid measure-theoretic overhead, the Lean formalization works entirely over finite weighted probability spaces and converts corners in $\F_2^n \times \F_2^n$ into triangles in a $3$-partite graph. Over $\F_2^n$ (where $+ = -$), substituting $z = x + y + d$ sets $d = x + y + z$, $x + d = y + z$, and $y + d = x + z$; thus $(x, y) \in S_d(A)$ holds if and only if $(x, y) \in E_{BC}(A)$, $(x, z) \in E_{BD}(A)$, and $(y, z) \in E_{CD}(A)$, where
+\[
+  E_{BC}(A) = A, \qquad
+  E_{BD}(A) = \{(x, z) : (x, x + z) \in A\}, \qquad
+  E_{CD}(A) = \{(y, z) : (y + z, y) \in A\}
+\]
+(lines~1370--1376); the bijection $(d, x, y) \mapsto (x, y, x + y + d)$ between $\{(d, x, y) : d \in \ker \pi,\ (x, y) \in S_d(A)\}$ and the triples $(x, y, z)$ in the outer boxes with all three edges present is carried out inside \lean{sum\_corners\_ker\_eq} (l.~3428; the \lean{Finset.\allowbreak{}card\_bij} step is at ll.~3521--3571). Given a surjective $\F_2$-linear projection $\pi : \F_2^n \to \F_2^r$, restricting $(x, y, z)$ to an ``outer box'' of coset fibers $\pi^{-1}(u) \times \pi^{-1}(v) \times \pi^{-1}(u + v)$ enforces $\pi(d) = \pi(x + y + z) = u + v + (u + v) = 0$, i.e., $d \in \ker \pi$. The proof proceeds in five stages:
+
+\begin{enumerate}[label=(U\arabic*),leftmargin=2.6em]
+\item \emph{Finite triforce inequality} (\lean{weightedTriforce\_ge\_div\_256}, l.~86; \lean{weightedTriforce\_ge\_pow\_\allowbreak four}, l.~402). For finite probability vectors $p, q, r$ and a $[0, 1]$-valued kernel $f$ with mean $\mu = \sum_{i,j,k} p_i q_j r_k f_{ijk}$, the weighted triforce functional
+\[
+  T_{p,q,r}(f) = \sum_{i,j,k} p_i q_j r_k\, f_1(j, k)\, f_2(i, k)\, f_3(i, j), \qquad f_1(j, k) = \sum_{i'} p_{i'} f_{i'jk}
+\]
+(with $f_2, f_3$ the analogous marginals) satisfies $T_{p,q,r}(f) \ge \mu^4 / 256$ by conditioning on the event that all three marginals are at least $\mu / 4$, and is upgraded to the sharp bound $T_{p,q,r}(f) \ge \mu^4$ by an iterated tensor-squaring argument (\lean{weightedTriforce\_tensor\_sq}, l.~241).
+\item \emph{Walsh--Fourier analysis on subspaces of $\F_2^n$} (\lean{section WalshFourier}, l.~676--998). Formalizes Walsh characters (\lean{walshChar}, l.~678), Fourier coefficients (\lean{fourierCoeff}, l.~806), Parseval's identity (\lean{parseval\_walsh}, l.~828), and the Fourier bound on additive triples $x + y + z = w_0$ in a subspace $W \le \F_2^n$ (\lean{triple\_\allowbreak count\_via\_fourier}, l.~864; \lean{triple\_count\_bound}, l.~921), which controls linear-slice uniformity inside coset fibers of $\ker \pi$.
+\item \emph{Two-energy boxing regularity} (\lean{regularity\_lemma}, l.~3199). For every $\varepsilon > 0$ there is $R_{\max} \in \N$ such that for every $n$ and every $A \subseteq \F_2^n \times \F_2^n$ there exists a \lean{Boxing} (l.~1242): a surjective $\F_2$-linear map $\pi : \F_2^n \to \F_2^r$ with $r \le R_{\max}$ (giving $4^r$ outer boxes indexed by $(u, v) \in \F_2^r \times \F_2^r$, each with fiber size $2^{n-r}$) together with $m$-colour partitions (\lean{Bpart}, \lean{Cpart}, \lean{Dpart}, l.~1262--1270) of $\pi^{-1}(u)$, $\pi^{-1}(v)$, and $\pi^{-1}(u + v)$, such that all but an $\varepsilon$-fraction of outer boxes are both Walsh--Fourier uniform in the three colour partitions and bipartite-quasirandom across $(E_{BC}, E_{BD}, E_{CD})$. Termination is proved via two mean-square energy-increment steps (\lean{refinement\_A}, l.~1803; \lean{refinement\_B}, l.~2649) and nested bounded iteration loops (\lean{inner\_regularity\_loop}, l.~3054; \lean{outer\_regularity\_loop}, l.~3148).
+\item \emph{Triangle counting in regular outer boxes} (\lean{triangle\_counting\_lemma}, l.~3285; \lean{regular\_outer\_\allowbreak box\_corners}, l.~4360). In any $\eta$-regular outer box $(u, v)$ of box density $\alpha_{uv}$, bipartite quasirandomness approximates the triangle count on each colour triple $(i, j, k)$ by the product of pairwise bipartite densities, and Walsh--Fourier uniformity equates the total edge density of each bipartite piece with a marginal of a $[0, 1]$-valued kernel; applying (U1) yields at least $(2^{n-r})^3 (\alpha_{uv}^4 - 9\eta)$ triangles in box $(u, v)$.
+\item \emph{Kernel averaging and removal of $d = 0$} (\lean{sum\_corners\_ker\_eq}, l.~3428; \lean{sum\_pow4\_ge\_pow4\_sum}, l.~4541; \lean{S\_zero\_card}, l.~4560; l.~4569--4797). By the tripartite bijection above, $\sum_{d \in \ker \pi} |S_d(A)|$ equals the total triangle count summed over all $4^r$ outer boxes $(u, v)$. The power-mean (H\"older) inequality $(\sum_x g_x)^4 \le |s|^3 \sum_x g_x^4$ (\lean{sum\_pow4\_ge\_pow4\_sum}, proved in Lean by two applications of Cauchy--Schwarz) gives $\sum_{u,v} \alpha_{uv}^4 \ge 4^r \alpha^4$, producing a total count $\ge (2^{n-r})^3 \cdot 4^r (\alpha^4 - O(\eta)) = 2^{n-r} N^2 (\alpha^4 - O(\eta))$. Subtracting the degenerate $d = 0$ contribution $|S_0(A)| = |A| \le N^2$ (\lean{S\_zero\_card}) and averaging over $\ker \pi \setminus \{0\}$---which has $2^{n-r} - 1 \ge 1$ elements once $2^{n-r} \ge \max(2, 2/\varepsilon)$---exhibits a nonzero $d \in \ker \pi \setminus \{0\}$ with $|S_d(A)| \ge (\alpha^4 - \varepsilon) N^2$.
+\end{enumerate}
+
+\subsection{Lower bound on \texorpdfstring{$C$}{C}: no \texorpdfstring{$c < 4$}{c < 4} is valid}
+
+\begin{proposition}[\lean{not\_validExponent\_of\_lt\_four}, l.~6589]\label{prop:lower}
+If $c < 4$ (including $c \le 0$), then $c$ is not a valid exponent.
+\end{proposition}
+
+The formalization combines three constructive and probabilistic ingredients following~\cite{Mandache,FSSSZ} (to avoid colliding with the group difference $d \in \F_2^n$, we write $d_{\mathrm{B}} \in \N$ here for the Behrend dimension parameter, named \lean{d} in \lean{behrend\_ap3\_free} and distinguished from \lean{d\_corner} in \lean{not\_validExponent\_of\_lt\_four}):
+
+\begin{enumerate}[label=(L\arabic*),leftmargin=2.6em]
+\item \emph{Behrend sphere construction} (\lean{behrend\_ap3\_free}, l.~4904). For integers $d_{\mathrm{B}} \ge 1$ and $m \ge 2$, there exists a $3$-AP-free subset $B \subseteq \{0, \dots, (2m - 1)^{d_{\mathrm{B}}} - 1\}$ satisfying
+\[
+  |B| \ge \frac{m^{d_{\mathrm{B}}}}{d_{\mathrm{B}}(m - 1)^2 + 1},
+\]
+constructed by pigeonholing $\{0, \dots, m - 1\}^{d_{\mathrm{B}}}$ onto a sphere of constant squared Euclidean norm and encoding vectors in base $2m - 1$ without carries.
+\item \emph{Ruzsa--Szemer\'edi triforce hypergraph} (\lean{ruzsa\_szemeredi\_triforce\_density}, l.~5079). For $M \ge 1$, $q = 2M - 1$, and any $3$-AP-free set $B \subseteq \{0, \dots, M - 1\}$, the $\{0, 1\}$-valued kernel on $(\Z/q\Z)^3$ defined by
+\[
+  W_B(u, v, w) = 1 \iff \exists\, b \in B,\; v = u + b \text{ and } w = u + 2b
+\]
+has uniform mean $\alpha_B = |B| / q^2$ and exact triforce density $\tau_B = |B| / q^5 = \alpha_B^4 (q / |B|)^3$.
+\item \emph{Random labelling and transversal concentration} (\lean{mandache\_random\_corner\_upper}, l.~5901). For any $\{0, 1\}$-valued kernel $W$ on $(\Z/q\Z)^3$ with uniform mean $\alpha$ and triforce density $\tau$, and any $\varepsilon > 0$, for all sufficiently large $n$ there exists $A \subseteq \F_2^n \times \F_2^n$ with $|A| \ge (\alpha - \varepsilon) N^2$ and $|S_d(A)| \le (\tau + \varepsilon) N^2$ for every nonzero $d \in \F_2^n$. Specifically, one samples a uniform random labelling $\omega = (X, Y, Z)$ of $\F_2^n \sqcup \F_2^n \sqcup \F_2^n$ by $\Z/q\Z$ and sets $A_\omega = \{(x, y) : W(X_x, Y_y, Z_{x+y}) = 1\}$. Concentration is proved without measure theory via a finite-product Hoeffding inequality (\lean{hoeffding\_oneD}--\lean{finite\_product\_hoeffding\_lower}, l.~5230--5662) applied to maximal coordinate-disjoint transversals (\lean{exists\_max\_indep}, l.~5723), averaged over group translates by double counting (\lean{double\_counting\_translate}, l.~5771), and combined via a union bound over all $2^n - 1$ nonzero differences~$d$.
+\end{enumerate}
+
+Given $c < 4$ and a purported uniform constant $K > 0$, the Lean proof chooses $k_0 \in \N$ with $2^{-k_0} < K / 4$ and an integer dimension $d_{\mathrm{B}} \ge 3$ large enough that $(4 - c)\, d_{\mathrm{B}}^2 \ge 4|c - 1|\, d_{\mathrm{B}} + (c + |c - 1| + k_0)$, sets $m = 2^{d_{\mathrm{B}}}$, $M = (2m - 1)^{d_{\mathrm{B}}}$, and $q = 2M - 1$, and instantiates the Behrend set $B$ of~(L1) and kernel $W_B$ of~(L2). Evaluating at $\alpha' = \alpha_B / 2 \in (0, 1)$, the identity of~(L2) and cardinality bound of~(L1) yield
+\[
+  \frac{\tau_B}{(\alpha')^c} \le 2^{\,c + (4 d_{\mathrm{B}} + 1)|c - 1| - (4 - c) d_{\mathrm{B}}^2} \le 2^{-k_0} < \frac{K}{4}
+\]
+(\lean{ratio\_eq\_formula}, l.~6506; \lean{ratio\_bound\_pow2}, l.~6540). Applying~(L3) with $\varepsilon_0 = \min(\alpha_B / 2,\, (K / 4)(\alpha')^c) > 0$ together with \lean{ValidExponent c} at density $\alpha'$ produces, for some sufficiently large~$n$, a set $A \subseteq \F_2^n \times \F_2^n$ satisfying $|A| \ge \alpha' N^2$ and $|S_d(A)| \le (\tau_B + \varepsilon_0) N^2$ for every $d \neq 0$, whereas validity of~$c$ demands $|S_d(A)| \ge K (\alpha')^c N^2$ for some $d \neq 0$. Cancelling $N^2 > 0$ forces $K (\alpha')^c \le \tau_B + \varepsilon_0 < \tfrac{K}{2} (\alpha')^c$, a contradiction.
+
+\begin{remark}\label{rem:mandache}
+The file also formalizes Mandache's explicit $2 \times 2 \times 2$ kernel $g(i, j, k) = 0 \iff i = j = k$, which has mean $3/4$ and triforce density $13/32$ (\lean{mandacheKernel}, l.~4829; \lean{mandacheKernel\_\allowbreak triforce}, l.~4833), corresponding to the exponent $3 + \log(26/27)/\log(3/4) = 3.1311876\dots$ in~\cite{Mandache}. This declaration is a worked example and is \emph{not} used in the proof of Theorem~\ref{thm:main}; the bound $C \ge 3.13$ of \lean{green\_19.\allowbreak{}lower} is deduced directly from $C = 4$.
+\end{remark}
+
+\section{Scope and novelty}\label{sec:scope}
+
+\emph{Mathematics.} Nothing in this note is new mathematics. The value $C = 4$, the equivalence with triforce densities, the two-energy regularity argument over $\F_2^n$, and the Behrend / Ruzsa--Szemer\'edi upper construction for triforce densities are due to Mandache~\cite{Mandache} and to Fox, Sah, Sawhney, Stoner, and Zhao~\cite{FSSSZ}, building on Behrend~\cite{Behrend} and Ruzsa--Szemer\'edi~\cite{RS}. Because Green's Problem~19 asks for the infimum exponent $C$---and $c = 4$ is already valid with $K = \tfrac{1}{2}$ by Mandache's $\alpha^4$ lower bound---our formalization uses the Behrend / Ruzsa--Szemer\'edi construction for $C \ge 4$ alongside Mandache's regularity proof for $C \le 4$, and does not formalize the super-quartic triangle-removal refinement $M(\alpha) = \omega(\alpha^4)$ (written $\omega(\delta^4)$ in~\cite{FSSSZ}) or the higher-dimensional results of~\cite{FSSSZ}.
+
+\emph{Formalization.} What this artifact contributes is a complete, kernel-checked Lean~4 proof of the upstream \lean{formal-conjectures} declaration \lean{Green19.\allowbreak{}green\_19}~\cite{FC}, built on Mathlib alone in its standalone version and linked directly to the upstream module in its bridge version. Public repository checks on November~27, 2026 (ET) found the following:
+\begin{itemize}[leftmargin=1.8em]
+\item In \lean{google-deepmind/\allowbreak{}formal-conjectures}~\cite{FC}, both at pinned commit \lean{9097e2f9} (November~24, 2026) and on \lean{main} (commit \lean{f606af16}, November~27, 2026; \lean{19.\allowbreak{}lean} last touched at commit \lean{6fbb54f2} on September~18, 2026), \lean{Green19.\allowbreak{}green\_19} has proof \lean{sorry}. Four pull requests in March~2026 (\lean{\#2466}, \lean{\#2845}, \lean{\#3364}, \lean{\#3385}) proposed only metadata/category-tag edits without formal proofs and were closed unmerged. Pull request \lean{\#5557} (merged September~12, 2026) derives \lean{green\_19.\allowbreak{}lower} and \lean{green\_19.\allowbreak{}upper} from the still-unproved \lean{green\_19}.
+\item In \lean{GuillaumeBAUD-coder/\allowbreak{}open-math-agents}~\cite{OMA}, which collects machine-checked proofs of \lean{formal-conjectures} declarations, we found two merged partial-progress pull requests on November~27, 2026: \lean{\#3878} (\lean{Green19.\allowbreak{}green\_19.\allowbreak{}R1}, merged 2:40~AM~ET), proving a conditional reduction \lean{H1 -> H2 -> green\_19} from two unproved hypotheses, and \lean{\#4879} (\lean{Green19.\allowbreak{}green\_19.\allowbreak{}R1.\allowbreak{}H2}, merged 5:11~AM~ET; a later duplicate PR \lean{\#9724} was closed unmerged at 12:52~PM~ET), proving the second hypothesis \lean{H2} (a sampling bound for the triangle hypergraphs of locally linear graphs). We found no pull request proving the first hypothesis \lean{H1} (a transfer of power-law triforce lower bounds to popular corners, as in Mandache's regularity argument) and none proving \lean{green\_19} itself.
+\item A search of public GitHub code for Lean files referencing Green's Problem~19, Mandache's paper, or Fox--Sah--Sawhney--Stoner--Zhao found no other complete Lean proof.
+\end{itemize}
+These public searches are necessarily non-exhaustive (private repositories are invisible), and we make no priority claim.
+
+\section{Verification receipt}\label{sec:receipt}
+
+Initial full-audit checks were executed on a Linux workstation (20 CPU threads, 32~GB RAM) on November~27, 2026 between 8:05 and 8:30~AM~ET against the pinned toolchain below (Lean~4~\cite{Lean4} with Mathlib~\cite{Mathlib}). Before the release at 1:35~PM~ET, three documentation comments per file were edited so as not to describe the formalization itself as a mathematical ``resolution'' (\lean{receipts/\allowbreak{}green19/\allowbreak{}header-comment-diff.\allowbreak{}txt}, zero code or line-number changes), and both published files were recompiled cleanly with the full audit footers, finishing at 1:33~PM~ET (\lean{receipts/\allowbreak{}green19/\allowbreak{}RECEIPT.\allowbreak{}md}). Every Lean invocation ran with \lean{-D autoImplicit=false -D relaxedAutoImplicit=false}; neither file contains any \lean{set\_option} directive.
+
+\begin{center}
+\small
+\begin{tabular}{@{}ll@{}}
+\toprule
+Component & Version / Commit \\
+\midrule
+Lean 4 & \lean{4.33.1} (commit \lean{819816b2}), \lean{leanprover/\allowbreak{}lean4:v4.33.1} \\
+Mathlib & \lean{0df444a360eaa60ab8c11dca51a86af692955474} (tag \lean{v4.33.1}) \\
+\lean{formal-conjectures} & \lean{9097e2f90e66d2f6244209cb1c07f7120d17ec53} (November 24, 2026) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+
+\begin{center}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{2.45in}rr>{\raggedright\arraybackslash}p{2.15in}@{}}
+\toprule
+Published Path (Audit Module Name) & Lines & Bytes & Published SHA-256 \\
+\midrule
+\lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}standalone.\allowbreak{}lean} (\lean{Green19.\allowbreak{}lean}, Mathlib only) & 6,975 & 376,839 & \lean{4032046c1b6f4916\allowbreak{}311301822d867c44\allowbreak{}b2a6848f705be94e\allowbreak{}d26214b03733036d} \\
+\lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}lean} (\lean{Green19\_UpstreamBridge.\allowbreak{}lean}) & 7,001 & 376,831 & \lean{30dfe0c581913817\allowbreak{}fc3f2feeb25b0cad\allowbreak{}7d080c5c54a384b4\allowbreak{}040236a2ebf6f9ee} \\
+\bottomrule
+\end{tabular}
+\end{center}
+{\footnotesize\noindent(Pre-doc-edit audited SHA-256 prefixes: \lean{bd3b53d4...} and \lean{02fb6e57...}; line counts, proof terms, axiom closures, and \lean{EXPRCHK} outputs are identical before and after the three-comment edit. The compile times, memory figures, and \lean{leanchecker} times in this section were measured on the audited, pre-edit files.)\par}
+
+\medskip
+\noindent\textbf{G1. Clean compilation, transitive axiom closure, and kernel replay.}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+Run (prebuilt upstream module: 42 s) & Exit & Wall (s) & Peak RSS (GiB) & Diagnostics \\
+\midrule
+\lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}standalone.\allowbreak{}lean} & 0 & 36.7 & 7.2 & none \\
+\lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}lean} & 0 & 56.0 & 7.6 & none \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The standalone file ends (lines~6962--6975) with \lean{\#print axioms} for 14 declarations:
+\begin{quote}\small\ttfamily\let\_\LeanUS\raggedright
+weightedTriforce\_ge\_div\_256, weightedTriforce\_ge\_pow\_four, popular\_corner\_f2\_pow\_four, validExponent\_four, validExponent\_of\_ge\_four, mandacheKernel\_triforce, behrend\_ap3\_free, ruzsa\_szemeredi\_triforce\_density, mandache\_random\_corner\_upper, not\_validExponent\_of\_lt\_four, validExponent\_iff, green\_19, green\_19.lower, green\_19.upper;
+\end{quote}
+each depends on \lean{[propext, Classical.\allowbreak{}choice, Quot.\allowbreak{}sound]}. The bridge file ends (lines~6993--7001) with \lean{\#print axioms} for its nine bridge declarations: \lean{bridge\_Fp\_eq} and \lean{bridge\_F2\_eq} depend on no axioms, and the remaining seven depend on the same three standard axioms.
+
+An appended audit metaprogram (\lean{receipts/\allowbreak{}green19/\allowbreak{}audit\_footer\_*.lean.\allowbreak{}txt}) enumerates every constant added by each module and traverses the full transitive constant-dependency graph (\lean{29,245} reachable constants in standalone, \lean{29,261} in bridge). The standalone module adds \lean{576} local constants (\lean{493} theorems, \lean{80} definitions, and one structure with its constructor and recursor); the bridge module adds \lean{583} (\lean{502} theorems, \lean{78} definitions---as $\F$ and $\F_2$ come from upstream and nine bridge theorems are added---plus the same structure, constructor, and recursor). Across \emph{all} local constants, the union of reachable axioms is strictly \lean{\{Quot.\allowbreak{}sound, Classical.\allowbreak{}choice, propext\}}; there are zero \lean{sorryAx}, \lean{ofReduceBool}, \lean{trustCompiler}, custom \lean{axiom}, \lean{opaque}, \lean{implemented\_by}, or \lean{extern} entries. The metaprogram's \lean{isPartial} check flags only two compiler-generated auxiliary definitions, \lean{iterStepR.\allowbreak{}\_unsafe\_rec} and \lean{boundM.\allowbreak{}\_unsafe\_rec}, which Lean emits (with partial safety, for its code generator) alongside the definitions \lean{iterStepR} (l.~3034) and \lean{boundM} (l.~3110) on~$\N$. Both are ordinary structural recursions on their first argument, which Lean elaborates to \lean{Nat.\allowbreak{}brecOn}; their logical definitions do not mention the \lean{.\_unsafe\_rec} constants, and a direct scan of the 576 local constants of the standalone module finds no constant that refers to either of them, so no theorem depends on them. A comment- and string-stripping scan (\lean{static\_token\_scan.\allowbreak{}txt}) finds zero occurrences of \lean{sorry}, \lean{admit}, \lean{native\_decide}, \lean{ofReduceBool}, \lean{trustCompiler}, \lean{implemented\_by}, \lean{extern}, \lean{unsafe}, \lean{axiom}, \lean{opaque}, \lean{partial}, \lean{decide +native}, \lean{decide +kernel}, \lean{set\_option}, \lean{maxHeartbeats}, \lean{maxRecDepth}, \lean{macro}, \lean{syntax}, \lean{elab}, \lean{initialize}, or \lean{\#eval}. Replaying compiled \lean{.olean} artifacts with \lean{leanchecker Green19} (3.7~s) and \lean{leanchecker Green19\_UpstreamBridge} (7.8~s) exited with code~0 and empty output.
+
+\medskip
+\noindent\textbf{G2. Fidelity to the upstream statement.} The bridge file imports the upstream module and adds \emph{nothing} inside \lean{namespace Green19}; its final section (lines~6951--6991) begins as follows (reformatted; three sanity \lean{example}s restating \lean{ValidExponent 4}, \lean{ValidExponent 5}, and $\neg$\,\lean{ValidExponent 3.99} for the upstream definitions are omitted):
+
+\begin{leancode}
+section UpstreamBridge
+
+theorem bridge_Fp_eq : @\(\F\) = fun p n : \(\N\) => Fin n \(\to\) ZMod p := rfl
+theorem bridge_F2_eq : @\(\F\sb{2}\) = fun n : \(\N\) => \(\F\) 2 n := rfl
+theorem bridge_IsCorner_eq : @StandaloneGreen19.IsCorner = @Green19.IsCorner := rfl
+theorem bridge_S_eq : @StandaloneGreen19.S = @Green19.S := rfl
+theorem bridge_ValidExponent_eq :
+    StandaloneGreen19.ValidExponent = Green19.ValidExponent := rfl
+theorem bridge_C_eq : StandaloneGreen19.C = Green19.C := rfl
+
+theorem upstream_green_19 :
+    type_of% @Green19.green_19 :=
+  StandaloneGreen19.green_19
+
+theorem upstream_green_19_lower :
+    type_of% @Green19.green_19.lower :=
+  StandaloneGreen19.green_19.lower
+
+theorem upstream_green_19_upper :
+    type_of% @Green19.green_19.upper :=
+  StandaloneGreen19.green_19.upper
+
+-- (three sanity examples omitted)
+end UpstreamBridge
+\end{leancode}
+
+Direct \lean{Expr} inspection in \lean{AUDIT FOOTER B} confirms that the elaborated types of \lean{upstream\_green\_19*} are strictly \lean{Expr.\allowbreak{}equal} (with identical hashes) to \lean{@Green19.\allowbreak{}green\_19*}, and that renaming \lean{StandaloneGreen19} to \lean{Green19} makes both the types and defining bodies of \lean{IsCorner}, \lean{S}, \lean{ValidExponent}, and \lean{C} alpha-equivalent (\lean{==}) and \lean{Expr.\allowbreak{}equal} modulo binder names. Additional theorems in \lean{section AuditWitnesses} (\lean{audit\_valid\_set\_eq}, \lean{audit\_isLeast}, \lean{audit\_nonempty}, \lean{audit\_bddBelow}, \lean{audit\_C\_eq\_four\_via\_Ici}, concrete validity/non-validity examples at $-1, 0, 1, 3, 3.13, 3.9999, 4, 4.0001, 100$, and $A = \lean{univ}$ satisfiability) compile under the same three axioms, confirming non-vacuity and non-degeneracy of \lean{sInf}. In a separate sanity-check file that imports only the upstream module and Mathlib (not part of either published proof file), kernel-decided small-set evaluations ($n = 1, 2$; via \lean{decide +kernel}, which does not use \lean{ofReduceBool}) agree with the upstream definitions, and an independent exact Python recomputation of the Ruzsa--Szemer\'edi counts ($M = 5, 10, 14$) agrees with the Lean declarations.
+
+\begin{table}[t]
+\centering
+\small
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{2.9in}>{\raggedleft\arraybackslash}p{1.4in}@{}}
+\toprule
+Paper & Lean declaration (\lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}standalone.\allowbreak{}lean}) & Line(s) \\
+\midrule
+Definitions (Sec.~\ref{sec:statement}) & \lean{IsCorner}, \lean{S}, \lean{ValidExponent}, \lean{C} (verified identical to upstream) & 37--58 \\
+Theorem~\ref{thm:main} & \lean{validExponent\_iff}, \lean{green\_19} & 6815, 6823 \\
+$C \ge 3.13,\; C \le 4$ & \lean{green\_19.\allowbreak{}lower}, \lean{green\_19.\allowbreak{}upper} & 6831, 6836 \\
+Proposition~\ref{prop:upper} & \lean{popular\_corner\_f2\_pow\_four}, \lean{validExponent\_four}, \lean{validExponent\_of\_ge\_four} & 4569, 4798, 4808 \\
+(U1) & \lean{weightedTriforce\_ge\_div\_256}, \lean{weightedTriforce\_ge\_pow\_four} & 86, 402 \\
+(U2) & \lean{walshChar}, \lean{fourierCoeff}, \lean{parseval\_walsh}, \lean{triple\_count\_via\_fourier}, \lean{triple\_count\_bound} (private) & 676--998 \\
+(U3) & \lean{refinement\_A}, \lean{refinement\_B}, \lean{inner\_regularity\_loop}, \lean{outer\_regularity\_loop}, \lean{regularity\_lemma} (private) & 1803, 2649, 3054, 3148, 3199 \\
+(U4) & \lean{triangle\_counting\_lemma}, \lean{regular\_outer\_box\_corners} (private) & 3285, 4360 \\
+(U5) & \lean{sum\_corners\_ker\_eq}, \lean{sum\_pow4\_ge\_pow4\_sum}, \lean{S\_zero\_card} (private) & 3428, 4541, 4560 \\
+Proposition~\ref{prop:lower} & \lean{not\_validExponent\_of\_lt\_four} & 6589 \\
+(L1) & \lean{behrend\_ap3\_free} & 4904 \\
+(L2) & \lean{ruzsa\_szemeredi\_triforce\_density} & 5079 \\
+(L3) & \lean{finite\_product\_hoeffding\_upper}, \lean{finite\_product\_hoeffding\_lower} (private); \lean{mandache\_random\_corner\_upper} & 5558, 5611, 5901 \\
+Remark~\ref{rem:mandache} & \lean{mandacheKernel}, \lean{mandacheKernel\_triforce} (example only) & 4829, 4833 \\
+\bottomrule
+\end{tabular}
+\medskip
+\caption{Correspondence between statements in this note and declarations in \lean{proofs/\allowbreak{}Green19.\allowbreak{}green\_19.\allowbreak{}standalone.\allowbreak{}lean}. Prose descriptions in Section~\ref{sec:math} summarize the Lean proofs.}
+\label{tab:correspondence}
+\end{table}
+
+\medskip
+\noindent\textbf{G3. Paper--Lean correspondence.} Table~\ref{tab:correspondence} maps every statement and proof stage of this note to its Lean declaration. Prose-only claims without a Lean counterpart are the historical remarks of Section~\ref{sec:intro}, attributions to~\cite{Mandache,FSSSZ,Chu,Behrend,RS}, and the GitHub survey of Section~\ref{sec:scope}.
+
+\section{Reproducibility}\label{sec:repro}
+
+From a checkout of \lean{formal-conjectures}~\cite{FC} at commit \lean{9097e2f9} with its pinned Mathlib, place or link the \lean{proofs/\allowbreak{}} directory from release \lean{v1.1.0-green19} and run:
+
+\begin{leancode}
+lake build FormalConjectures.GreensOpenProblems.\guillemotleft{}19\guillemotright{}
+lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false \textbackslash
+  proofs/Green19.green_19.standalone.lean
+lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false \textbackslash
+  proofs/Green19.green_19.lean
+\end{leancode}
+
+The standalone file needs only Mathlib at commit \lean{0df444a3}. To replay the modules with \lean{leanchecker}, \emph{copy} (not just link) the two files into the checkout, since \lean{lean -o} requires its input to lie inside the project root, write the \lean{.olean} files into Lake's library directory under the module names \lean{Green19} and \lean{Green19\_UpstreamBridge}, and run \lean{lake env leanchecker}:
+
+\begin{leancode}
+lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false \textbackslash
+  -o .lake/build/lib/lean/Green19.olean proofs/Green19.green_19.standalone.lean
+lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false \textbackslash
+  -o .lake/build/lib/lean/Green19_UpstreamBridge.olean proofs/Green19.green_19.lean
+lake env leanchecker Green19
+lake env leanchecker Green19_UpstreamBridge
+\end{leancode}
+
+Each command in both blocks exits with code~0, the compilations print only the \lean{\#print axioms} lines of Section~\ref{sec:receipt} and no warning or error, and \lean{leanchecker} prints nothing. (The library directory used by \lean{lake env} is \lean{.lake/\allowbreak{}build/\allowbreak{}lib/\allowbreak{}lean/\allowbreak{}}; the \lean{.olean} files may be deleted afterwards.) All sources and receipts are archived at \url{https://github.com/ronak14p/avon-formal-proofs} (release \lean{v1.1.0-green19}). This Version~3 revision aligns repository file paths, adds (U2) to Table~\ref{tab:correspondence}, clarifies the tripartite reduction and notation, and leaves the Lean files unchanged.
+
+\section{Process and disclosure}\label{sec:process}
+
+The Lean files were generated by AI agents (a Gemini~4 lead agent with Gemini~4 worker agents) in one lane of an automated pipeline; the lane also produced a draft of this manuscript and an initial self-audit, which is superseded and unused here. The verification suite in Section~\ref{sec:receipt} was run independently by an execution agent (Claude Sonnet~5.5) and reviewed by a lead audit editor (Claude Opus~5.5). The text of this note was written with AI assistance, including its Version~3 technical and editorial revision, and the Version~3 text was re-checked against the published files, the upstream repositories, and the cited sources by a further independent audit agent (Claude Sonnet~5.5). No human has read the Lean source line by line or checked this text line by line; Ronak Patel (Avon Labs) is the party under whose name the work is released. Machine-checking of the proof by the Lean kernel is the only verification of the mathematics performed, apart from the sanity checks described above.
+
+\section{Limitations}\label{sec:limits}
+
+\begin{itemize}[leftmargin=1.8em]
+\item The trusted base comprises the Lean~4.33.1 kernel, Mathlib at \lean{0df444a3}, the upstream statement in \lean{formal-conjectures} at \lean{9097e2f9}, and the three standard axioms (\lean{propext}, \lean{Classical.\allowbreak{}choice}, \lean{Quot.\allowbreak{}sound}). Replaying modules with \lean{leanchecker} detects environment tampering rather than providing an independent external kernel check.
+\item What is proved is \lean{Green19.\allowbreak{}green\_19} \emph{as formalized upstream}: $K > 0$ is uniform in $\alpha \in (0, 1)$ while the threshold in $n$ may depend on~$\alpha$. Whether that statement is the intended reading of Green's problem is a matter for its authors; we noted the conventions in Section~\ref{sec:statement}. We do not prove, and do not claim, any version with a threshold in $n$ uniform in $\alpha$ (quantitative thresholds $n_0(\alpha)$ are not addressed), nor the corresponding question for squares, which is open~\cite{Green,FSSSZ}.
+\item Only the portions of~\cite{Mandache,FSSSZ} required for $C = 4$ are formalized; the $\omega(\alpha^4)$ refinement and higher-dimensional bounds of~\cite{FSSSZ} are not.
+\item The compile times and memory use in Section~\ref{sec:receipt} are for one machine and one run each.
+\item Public GitHub checks in Section~\ref{sec:scope} reflect November~27, 2026 and cannot rule out private work. Neither the proof nor this note has been refereed or submitted to the maintainers of \lean{formal-conjectures} or \lean{open-math-agents}.
+\end{itemize}
+
+\begin{thebibliography}{10}
+
+\bibitem{Green}
+B.~Green, \emph{100 open problems}, manuscript, \url{https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf} (Problem~19; accessed November~27, 2026).
+
+\bibitem{Mandache}
+M.~Mandache, \emph{A variant of the corners theorem}, Math.\ Proc.\ Cambridge Philos.\ Soc.\ \textbf{171} (2021), no.~3, 607--621; \lean{arXiv:1804.03972}; \doi{10.1017/S0305004121000049}.
+
+\bibitem{FSSSZ}
+J.~Fox, A.~Sah, M.~Sawhney, D.~Stoner, and Y.~Zhao, \emph{Triforce and corners}, Math.\ Proc.\ Cambridge Philos.\ Soc.\ \textbf{169} (2020), no.~1, 209--223; \lean{arXiv:1903.04863}; \doi{10.1017/S0305004119000173}.
+
+\bibitem{Chu}
+Q.~Chu, \emph{Multiple recurrence for two commuting transformations}, Ergodic Theory Dynam.\ Systems \textbf{31} (2011), no.~3, 771--792.
+
+\bibitem{Behrend}
+F.~A.~Behrend, \emph{On sets of integers which contain no three terms in arithmetical progression}, Proc.\ Natl.\ Acad.\ Sci.\ USA \textbf{32} (1946), no.~12, 331--332.
+
+\bibitem{RS}
+I.~Z.~Ruzsa and E.~Szemer\'edi, \emph{Triple systems with no six points carrying three triangles}, in \emph{Combinatorics} (Proc.\ Fifth Hungarian Colloq., Keszthely, 1976), Vol.~II, Colloq.\ Math.\ Soc.\ J\'anos Bolyai \textbf{18}, North-Holland, Amsterdam--New York, 1978, pp.~939--945.
+
+\bibitem{Mathlib}
+The mathlib Community, \emph{The Lean mathematical library}, in \emph{Proc.\ 9th ACM SIGPLAN Int.\ Conf.\ on Certified Programs and Proofs (CPP 2020)}, ACM, 2020, pp.~367--381; \doi{10.1145/3372885.3373824}.
+
+\bibitem{Lean4}
+L.~de Moura and S.~Ullrich, \emph{The Lean~4 theorem prover and programming language}, in \emph{Automated Deduction -- CADE 28}, Lecture Notes in Computer Science \textbf{12699}, Springer, 2021, pp.~625--635; \doi{10.1007/978-3-030-79876-5_37}.
+
+\bibitem{FC}
+Google DeepMind, \emph{formal-conjectures}, Apache-2.0 repository, \url{https://github.com/google-deepmind/formal-conjectures}, file \lean{FormalConjectures/\allowbreak{}\allowbreak GreensOpenProblems/\allowbreak{}\allowbreak 19.\allowbreak{}lean} (commit \lean{9097e2f9}, November~24, 2026; file verified unchanged on \lean{main} at commit \lean{f606af16}, November~27, 2026).
+
+\bibitem{OMA}
+\emph{open-math-agents}, GitHub repository \lean{GuillaumeBAUD-coder/\allowbreak{}open-math-agents}, pull requests \lean{\#3878} (\lean{Green19.\allowbreak{}green\_19.\allowbreak{}R1}, merged November~27, 2026, 07:40:07~UTC $=$ 2:40:07~AM~ET) and \lean{\#4879} (\lean{Green19.\allowbreak{}green\_19.\allowbreak{}R1.\allowbreak{}H2}, merged November~27, 2026, 10:11:09~UTC $=$ 5:11:09~AM~ET; duplicate \lean{\#9724} closed unmerged 17:52:02~UTC $=$ 12:52:02~PM~ET).
+
+\end{thebibliography}
+
+\end{document}
