@@ -75,6 +75,32 @@ lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false proofs/Green19.
 
 ---
 
+## Ben Green's Open Problem 95: Zakharov's theorem on sums of two palindromes (release `v1.2.0-green95`)
+
+**Paper:** [`paper/Lean4-Formalization-Zakharov-Sums-of-Two-Palindromes-2026-11-27-v2.pdf`](paper/Lean4-Formalization-Zakharov-Sums-of-Two-Palindromes-2026-11-27-v2.pdf). *A Lean 4 Formalization of Zakharov's Theorem on Sums of Two Palindromes (Ben Green's Open Problem 95)*, Ronak Patel (Avon Labs), November 27, 2026.
+
+| File | Lines | SHA-256 | Role |
+|---|---:|---|---|
+| [`proofs/Green95.green_95.lean`](proofs/Green95.green_95.lean) | 2,240 | `12f69a63ecbe3d160efe69d13c6682458c44654797d0cdb099bf5fee300be394` | Imports `FormalConjectures.GreensOpenProblems.«95»`; `bridge_green_95` and `bridge_zakharov` have types `type_of% @Green95.green_95` and `type_of% @Green95.green_95.variants.zakharov`. Contains the complete development. |
+| [`paper/Lean4-Formalization-Zakharov-Sums-of-Two-Palindromes-2026-11-27-v2.pdf`](paper/Lean4-Formalization-Zakharov-Sums-of-Two-Palindromes-2026-11-27-v2.pdf) | 13 pages | `18172e0a814b34a1f27d425b7c990783adc2a0d8184f5f611714ca1c9cfd5239` | Note: statements, proof architecture, verification receipt, scope. |
+| [`receipts/green95/`](receipts/green95/) | | | Recompile output, static scan, assembly script and doc-comment diff. |
+
+**What is proved.** For every base `g ≥ 2`, the number of `n < X` that are sums of two base-`g` palindromes is at most `X / (log X)^(1/10)` for all large `X`; hence these sums have natural density 0, a negative answer to Green's Problem 95. The mathematics is D. Zakharov's (*Most integers are not a sum of two palindromes*, Math. Proc. Cambridge Philos. Soc. 177 (2024), `arXiv:2402.10808`). This repository adds only the Lean 4 formalization.
+
+**Prior formal work.** In `open-math-agents`, PRs #3689 (`green_95.variants.zakharov`) and #3699 (`green_95`) by another contributor, opened at 1:57 and 1:59 AM ET and merged at 2:01 and 2:04 AM ET on November 27, 2026, prove both targets. This development was produced separately but is published later, so it is not the first public Lean proof of either target. Upstream `formal-conjectures` still has both statements as `sorry` with no `formal_proof` link (checked November 27, 2026).
+
+**Provenance.** The Lean file was written by AI agents and has not been read line by line by a human; it was audited by AI agents (clean compile, axioms, statement fidelity). The note is AI-assisted. Nothing has been submitted to `formal-conjectures`.
+
+**Receipt.** Lean `4.33.1`, Mathlib `0df444a3`, `formal-conjectures` `9097e2f9`. Recompiled as published on 2026-11-27 (finished 1:34 PM ET): exit 0, no errors (style-linter warnings only), all exported and bridge theorems depend only on `propext`, `Classical.choice`, `Quot.sound`; no `sorry`, `admit` or `native_decide` (`receipts/green95/`).
+
+```bash
+# from a formal-conjectures checkout at 9097e2f with its pinned Mathlib
+lake build FormalConjectures.GreensOpenProblems.«95»
+lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false proofs/Green95.green_95.lean
+```
+
+---
+
 ## Independent Verification
 
 1. Verify file integrity against the published manifest:

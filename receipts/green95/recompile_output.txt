@@ -1,0 +1,40 @@
+Green95.green_95.lean:37:0: warning: This file has no module docstring (`/-! ... -/`). Add one after the imports to document the file.
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Green95.green_95.lean:158:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Green95.green_95.lean:408:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Green95.green_95.lean:549:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Green95.green_95.lean:826:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Green95.green_95.lean:2087:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+'Green95Local.card_palSet_add_le_exp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green95Local.zakharov_explicit_positive' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green95Local.zakharov_explicit_sumsOfTwo' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green95Local.green_95_zakharov' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green95Local.green_95_hasDensity_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green95Local.green_95_upperDensity_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green95Local.green_95_lowerDensity_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green95Local.green_95' depends on axioms: [propext, Classical.choice, Quot.sound]
+Green95.green_95.lean:2194:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Green95.green_95.lean:2214:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Green95.green_95.lean:2228:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+bridge_green_95 : ∀ (g : ℕ), 2 ≤ g → ¬0 < (Green95.sumsOfTwo g).lowerDensity
+bridge_zakharov : ∀ (g : ℕ),
+  2 ≤ g → ∃ c, 0 < c ∧ ∀ᶠ (X : ℕ) in atTop, ↑(Green95.sumsOfTwoPositive g ∩ Set.Iio X).ncard ≤ ↑X / Real.log ↑X ^ c
+'bridge_green_95' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_zakharov' depends on axioms: [propext, Classical.choice, Quot.sound]

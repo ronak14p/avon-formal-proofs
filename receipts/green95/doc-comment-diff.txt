@@ -1,0 +1,11 @@
+--- audited/Green95.green_95.lean (sha256 a095a9b3...)
++++ published/Green95.green_95.lean
+@@ -2165,7 +2165,7 @@
+     (card_palSet_add_le_mul g)
+     (fun n m hm hmn => card_palSet_add_le_exp hg hm hmn)
+ 
+-/-- Negative resolution of Ben Green's Open Problem 95, matching `FormalConjectures` `Green95.green_95` 1:1. -/
++/-- Ben Green's Open Problem 95 (answered negatively by Zakharov), matching `FormalConjectures` `Green95.green_95` 1:1. -/
+ theorem green_95 :
+     ∀ g : ℕ, 2 ≤ g → ¬ 0 < LocalDensity.lowerDensity (sumsOfTwo g) := by
+   intro g hg
