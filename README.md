@@ -31,7 +31,7 @@ Full technical proof summaries, methodology notes, immutable GitHub submission t
 | [`Kourovka.19.25.kourovka_19_25.lean`](proofs/Kourovka.19.25.kourovka_19_25.lean) | Group Theory | 1,030 | `05:05:37Z` | PR `#3214` (CI green) | Explicit order-6,048 witness `PSU(3,3)` vs `C_6 × S_4 × (C_7 ⋊ C_6)` (`arXiv:2607.17477`) |
 | [`WrittenOnTheWallII.GraphConjecture72.conjecture72.lean`](proofs/WrittenOnTheWallII.GraphConjecture72.conjecture72.lean) | Graph Theory | 409 | `04:08:43Z` | PR `#2740` (CI green · Lean checker accepted · `needs-human-review`) | Gebendorfer's 31-vertex graph `G(2,24)` (DeLaViña WOWII disproof) |
 
-*\*`Constant6a.c6a_lower_bound_first.lean` adapts the scalar entropy inequality from Ho Boon Suan & Aristotle (Harmonic) under the MIT License (full notice retained in-file and in [`NOTICE`](NOTICE)).*
+*\*`Constant6a.c6a_lower_bound_first.lean` adapts the scalar entropy inequality from Ho Boon Suan & Aristotle (Harmonic) under the MIT License (full notice retained in-file and in [`NOTICE`](NOTICE)). That inequality generalizes R. B. Boppana's binary-entropy inequality `h(x²) ≥ φ·x·h(x)` (R. B. Boppana, [*A Useful Inequality for the Binary Entropy Function*](https://arxiv.org/abs/2301.09664), `arXiv:2301.09664`; Ho Boon Suan, *A generalization of Boppana's entropy inequality*, `arXiv:2601.19327`); credit for the inequality belongs to Boppana, Ho and Aristotle.*
 
 ---
 

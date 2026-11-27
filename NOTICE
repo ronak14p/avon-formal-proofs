@@ -14,6 +14,15 @@ Third-Party Attributions:
    inequality from `https://github.com/boonsuan/entropy-inequality` by
    Ho Boon Suan and Aristotle (Harmonic), Copyright (c) 2026 ho boon suan,
    licensed under the MIT License (full notice retained inside the file).
+   That scalar inequality generalizes the binary-entropy inequality of
+   Ravi B. Boppana, h(x^2) >= phi * x * h(x) (phi the golden ratio), see
+   R. B. Boppana, "A Useful Inequality for the Binary Entropy Function",
+   arXiv:2301.09664 (2023), and Ho Boon Suan, "A generalization of Boppana's
+   entropy inequality", arXiv:2601.19327 (2026). Boppana used the inequality
+   in the 1980s for lower bounds on Boolean formulas (R. B. Boppana,
+   "Amplification of probabilistic Boolean formulas", FOCS 1985, as cited in
+   Alweiss-Huang-Sellke, arXiv:2211.11731). The Ho/Aristotle MIT notice above
+   and inside the file is unchanged.
 3. Underlying mathematical theorems, bounds, and counterexample constructions
    belong to their respective original authors, cited in each proof header
    and in `paper/Avon-Labs-Lean4-Formalizations-2026-11-27.pdf`.
