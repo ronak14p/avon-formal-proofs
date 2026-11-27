@@ -1,0 +1,49 @@
+--- audited/Green19.green_19.standalone.lean (sha256 bd3b53d4...)
++++ published/Green19.green_19.standalone.lean (sha256 4032046c...)
+@@ -1,7 +1,7 @@
+ import Mathlib
+ 
+ /-!
+-# Resolution of Ben Green's Open Problem 19: Popular Corners in `𝔽₂ n × 𝔽₂ n` and Triforce Densities
++# Ben Green's Open Problem 19 (solved: C = 4, Mandache; Fox–Sah–Sawhney–Stoner–Zhao): Popular Corners in `𝔽₂ n × 𝔽₂ n` and Triforce Densities
+ 
+ Standalone Lean 4 formalization (`import Mathlib` only) proving `Green19.green_19 : C = 4`,
+ `Green19.green_19.lower : C >= 3.13`, `Green19.green_19.upper : C <= 4`, and the exact exponent
+@@ -6501,7 +6501,7 @@
+   rw [hlhs] at hsum_ge
+   exact le_of_mul_le_mul_left hsum_ge hQ_pos
+ 
+-/- ### 5. Lower Bound and Resolution of Ben Green's Open Problem 19 -/
++/- ### 5. Lower Bound and the Value `C = 4` in Ben Green's Open Problem 19 -/
+ 
+ private lemma ratio_eq_formula (B_card q c : ℝ) (hB_pos : 0 < B_card) (hq_pos : 0 < q) :
+     (B_card / q ^ 5) / ((B_card / (2 * q ^ 2)) ^ c) =
+@@ -6819,7 +6819,7 @@
+     exact not_validExponent_of_lt_four hlt hv
+   · exact validExponent_of_ge_four
+ 
+-/-- Full resolution of Ben Green's Open Problem 19: `C = 4`. -/
++/-- Ben Green's Open Problem 19, solved by Mandache and Fox–Sah–Sawhney–Stoner–Zhao: `C = 4`. -/
+ theorem green_19 : C = 4 := by
+   have hset : {c : ℝ | ValidExponent c} = Set.Ici 4 := by
+     ext c
+--- audited/Green19.green_19.lean (sha256 02fb6e57...)
++++ published/Green19.green_19.lean (sha256 30dfe0c5...)
+@@ -6486,7 +6486,7 @@
+   rw [hlhs] at hsum_ge
+   exact le_of_mul_le_mul_left hsum_ge hQ_pos
+ 
+-/- ### 5. Lower Bound and Resolution of Ben Green's Open Problem 19 -/
++/- ### 5. Lower Bound and the Value `C = 4` in Ben Green's Open Problem 19 -/
+ 
+ private lemma ratio_eq_formula (B_card q c : ℝ) (hB_pos : 0 < B_card) (hq_pos : 0 < q) :
+     (B_card / q ^ 5) / ((B_card / (2 * q ^ 2)) ^ c) =
+@@ -6804,7 +6804,7 @@
+     exact not_validExponent_of_lt_four hlt hv
+   · exact validExponent_of_ge_four
+ 
+-/-- Full resolution of Ben Green's Open Problem 19: `C = 4`. -/
++/-- Ben Green's Open Problem 19, solved by Mandache and Fox–Sah–Sawhney–Stoner–Zhao: `C = 4`. -/
+ theorem green_19 : C = 4 := by
+   have hset : {c : ℝ | ValidExponent c} = Set.Ici 4 := by
+     ext c

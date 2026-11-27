@@ -1,0 +1,67 @@
+'bridge_Fp_eq' does not depend on any axioms
+'bridge_F2_eq' does not depend on any axioms
+'bridge_IsCorner_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_S_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_ValidExponent_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_C_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'upstream_green_19' depends on axioms: [propext, Classical.choice, Quot.sound]
+'upstream_green_19_lower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'upstream_green_19_upper' depends on axioms: [propext, Classical.choice, Quot.sound]
+AUDIT_ENUM total_local_constants=583 transitive_closure_size=29261 kinds=[(inductive, 1),
+ (ctor, 1),
+ (def, 78),
+ (theorem, 502),
+ (rec,
+  1)] flagged=[partial _private._stdin.0.StandaloneGreen19.boundM._unsafe_rec,
+ partial _private._stdin.0.StandaloneGreen19.iterStepR._unsafe_rec] axioms_in_closure_of_ALL_local_constants=[Quot.sound,
+ Classical.choice,
+ propext]
+EXPRCHK type upstream_green_19 vs Green19.green_19: beq=true strict-equal=true hashes=1200857577,1200857577 bridge-is-theorem=true upstream-is-theorem=true
+EXPRCHK proof term of upstream_green_19 := StandaloneGreen19.green_19
+EXPRCHK type upstream_green_19_lower vs Green19.green_19.lower: beq=true strict-equal=true hashes=3122203875,3122203875 bridge-is-theorem=true upstream-is-theorem=true
+EXPRCHK proof term of upstream_green_19_lower := StandaloneGreen19.green_19.lower
+EXPRCHK type upstream_green_19_upper vs Green19.green_19.upper: beq=true strict-equal=true hashes=213461857,213461857 bridge-is-theorem=true upstream-is-theorem=true
+EXPRCHK proof term of upstream_green_19_upper := StandaloneGreen19.green_19.upper
+EXPRCHK def IsCorner: type beq=true equal-mod-binder-names=true; value beq=true equal-mod-binder-names=true; upstream value present=true
+EXPRCHK def S: type beq=true equal-mod-binder-names=true; value beq=true equal-mod-binder-names=true; upstream value present=true
+EXPRCHK def ValidExponent: type beq=true equal-mod-binder-names=true; value beq=true equal-mod-binder-names=true; upstream value present=true
+EXPRCHK def C: type beq=true equal-mod-binder-names=true; value beq=true equal-mod-binder-names=true; upstream value present=true
+def Green19.ValidExponent : ℝ → Prop :=
+fun c =>
+  ∃ K > (0 : ℝ),
+    ∀ (α : ℝ),
+      (0 : ℝ) < α →
+        α < (1 : ℝ) →
+          ∀ᶠ (n : ℕ) in Filter.atTop,
+            ∀ (A : Finset (𝔽₂ n × 𝔽₂ n)),
+              have N := ↑(Fintype.card (𝔽₂ n));
+              ↑(#A) ≥ α * N ^ (2 : ℕ) → ∃ d, d ≠ (0 : 𝔽₂ n) ∧ ↑(#(Green19.S d A)) ≥ K * α ^ c * N ^ (2 : ℕ)
+def StandaloneGreen19.ValidExponent : ℝ → Prop :=
+fun c =>
+  ∃ K > (0 : ℝ),
+    ∀ (α : ℝ),
+      (0 : ℝ) < α →
+        α < (1 : ℝ) →
+          ∀ᶠ (n : ℕ) in Filter.atTop,
+            ∀ (A : Finset (𝔽₂ n × 𝔽₂ n)),
+              have N := ↑(Fintype.card (𝔽₂ n));
+              ↑(#A) ≥ α * N ^ (2 : ℕ) → ∃ d, d ≠ (0 : 𝔽₂ n) ∧ ↑(#(StandaloneGreen19.S d A)) ≥ K * α ^ c * N ^ (2 : ℕ)
+def Green19.C : ℝ :=
+sInf {c | Green19.ValidExponent c}
+def StandaloneGreen19.C : ℝ :=
+sInf {c | StandaloneGreen19.ValidExponent c}
+def Green19.S.{u_1} : {G : Type u_1} → [AddCommGroup G] → [Fintype G] → G → Finset (G × G) → Finset (G × G) :=
+fun {G} [AddCommGroup G] [Fintype G] d A => {p | Green19.IsCorner A p.1 p.2 d}
+def StandaloneGreen19.S.{u_1} : {G : Type u_1} → [AddCommGroup G] → [Fintype G] → G → Finset (G × G) → Finset (G × G) :=
+fun {G} [AddCommGroup G] [Fintype G] d A => {p | StandaloneGreen19.IsCorner A p.1 p.2 d}
+def Green19.IsCorner.{u_1} : {G : Type u_1} → [AddCommGroup G] → Finset (G × G) → G → G → G → Prop :=
+fun {G} [AddCommGroup G] A x y d => (x, y) ∈ A ∧ (x + d, y) ∈ A ∧ (x, y + d) ∈ A
+def StandaloneGreen19.IsCorner.{u_1} : {G : Type u_1} → [AddCommGroup G] → Finset (G × G) → G → G → G → Prop :=
+fun {G} [AddCommGroup G] A x y d => (x, y) ∈ A ∧ (x + d, y) ∈ A ∧ (x, y + d) ∈ A
+Green19.green_19 : Green19.C = 4
+upstream_green_19 : Green19.C = 4
+'audit_valid_set_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'audit_isLeast' depends on axioms: [propext, Classical.choice, Quot.sound]
+'audit_C_eq_four_via_Ici' depends on axioms: [propext, Classical.choice, Quot.sound]
+'audit_not_valid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'audit_valid' depends on axioms: [propext, Classical.choice, Quot.sound]

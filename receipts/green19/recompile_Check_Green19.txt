@@ -1,0 +1,23 @@
+'Green19.weightedTriforce_ge_div_256' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.weightedTriforce_ge_pow_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.popular_corner_f2_pow_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.validExponent_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.validExponent_of_ge_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.mandacheKernel_triforce' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.behrend_ap3_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.ruzsa_szemeredi_triforce_density' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.mandache_random_corner_upper' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.not_validExponent_of_lt_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.validExponent_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.green_19' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.green_19.lower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Green19.green_19.upper' depends on axioms: [propext, Classical.choice, Quot.sound]
+AUDIT_ENUM total_local_constants=576 transitive_closure_size=29245 kinds=[(inductive, 1),
+ (ctor, 1),
+ (def, 80),
+ (theorem, 493),
+ (rec,
+  1)] flagged=[partial _private._stdin.0.Green19.boundM._unsafe_rec,
+ partial _private._stdin.0.Green19.iterStepR._unsafe_rec] axioms_in_closure_of_ALL_local_constants=[Quot.sound,
+ Classical.choice,
+ propext]

@@ -47,6 +47,34 @@ The technical report PDF records the status as of report generation (05:26 UTC).
 
 ---
 
+## Ben Green's Open Problem 19: the popular-corner exponent `C = 4` in `𝔽₂ⁿ × 𝔽₂ⁿ` (release `v1.1.0-green19`)
+
+**Paper:** [`paper/Kernel-Checked-Green-Problem-19-2026-11-27-v2.pdf`](paper/Kernel-Checked-Green-Problem-19-2026-11-27-v2.pdf). *A Kernel-Checked Lean 4 Formalization of the Popular-Corner Exponent C = 4 in F_2^n x F_2^n (Ben Green's Open Problem 19)*, Ronak Patel (Avon Labs), November 27, 2026.
+
+| File | Lines | SHA-256 | Role |
+|---|---:|---|---|
+| [`proofs/Green19.green_19.lean`](proofs/Green19.green_19.lean) | 7,001 | `30dfe0c581913817fc3f2feeb25b0cad7d080c5c54a384b4040236a2ebf6f9ee` | Imports `FormalConjectures.GreensOpenProblems.«19»` and proves the upstream statements `Green19.green_19`, `.lower` and `.upper` (`upstream_green_19*` at the end of the file, typed by `type_of%`); the standalone definitions are checked equal to the upstream ones by `rfl`. |
+| [`proofs/Green19.green_19.standalone.lean`](proofs/Green19.green_19.standalone.lean) | 6,975 | `4032046c1b6f4916311301822d867c44b2a6848f705be94ed26214b03733036d` | The same proof with `import Mathlib` only. |
+| [`paper/Kernel-Checked-Green-Problem-19-2026-11-27-v2.pdf`](paper/Kernel-Checked-Green-Problem-19-2026-11-27-v2.pdf) | 10 pages | `f0e681faa049334193924fe166ba5b7c1edf1e8d4e54285b9deaa61703f6f3a5` | Note: statement, proof outline, verification receipt, scope and limits. |
+| [`receipts/green19/`](receipts/green19/) | | | Recompile logs with axiom output, static token scan, and the diff from the audited files. |
+
+**What is proved.** For every real `c`, `c` is a valid exponent in Green's Problem 19 if and only if `c ≥ 4`, so the infimum `C` equals `4` (and hence `3.13 ≤ C ≤ 4`, the upstream `.lower` and `.upper`). The mathematics is due to M. Mandache (*A variant of the corners theorem*, `arXiv:1804.03972`) and to J. Fox, A. Sah, M. Sawhney, D. Stoner and Y. Zhao (*Triforce and corners*, `arXiv:1903.04863`). This repository adds only the Lean 4 formalization.
+
+**Prior and related formal work.** In `open-math-agents`, PR #3878 proves a reduction `H1 → H2 → green_19` and PR #4879 proves `H2`; we found no public proof of `H1` or of `green_19` itself. As far as we could determine from public repositories on November 27, 2026, this is the first complete Lean 4 proof of `Green19.green_19`. Searches are not exhaustive; this is a statement about what we found, not a claim of priority.
+
+**Provenance.** The Lean files were written by AI agents and have not been read line by line by a human. Two independent AI audits checked them (clean compilation, axioms, statement fidelity, paper-to-Lean correspondence); the text of the note is AI-assisted. Nothing here has been submitted to or reviewed by the `formal-conjectures` or `open-math-agents` maintainers.
+
+**Receipt.** Lean `4.33.1`, Mathlib `0df444a360eaa60ab8c11dca51a86af692955474`, `formal-conjectures` `9097e2f90e66d2f6244209cb1c07f7120d17ec53`. Audited on 2026-11-27 (08:05 to 08:30 AM ET): both files compile with exit code 0 and no diagnostics under `-D autoImplicit=false -D relaxedAutoImplicit=false`; all declarations depend only on `propext`, `Classical.choice`, `Quot.sound`; `leanchecker` replays both modules; no `sorry`, `admit`, `native_decide`, `ofReduceBool`, `set_option` or custom axiom. The published files differ from the audited ones only in three documentation comments per file (they no longer call the formalization a "resolution"); both were recompiled after that change on 2026-11-27 (finished 1:33 PM ET) with the same results (`receipts/green19/`).
+
+```bash
+# from a formal-conjectures checkout at 9097e2f with its pinned Mathlib
+lake build FormalConjectures.GreensOpenProblems.«19»
+lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false proofs/Green19.green_19.lean
+lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false proofs/Green19.green_19.standalone.lean   # needs Mathlib only
+```
+
+---
+
 ## Independent Verification
 
 1. Verify file integrity against the published manifest:

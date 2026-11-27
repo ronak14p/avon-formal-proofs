@@ -1,0 +1,39 @@
+
+/- ===== AUDIT FOOTER A (appended by the auditor; not part of the published file) ===== -/
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let ns : Array Name := (env.constants.map₂.toList.map (·.1)).toArray
+  let mut kinds : Std.HashMap String Nat := {}
+  let mut flagged : Array String := #[]
+  for n in ns do
+    let some ci := env.find? n | continue
+    let k := match ci with
+      | .axiomInfo _ => "axiom" | .defnInfo _ => "def" | .thmInfo _ => "theorem"
+      | .opaqueInfo _ => "opaque" | .quotInfo _ => "quot" | .inductInfo _ => "inductive"
+      | .ctorInfo _ => "ctor" | .recInfo _ => "rec"
+    kinds := kinds.insert k (kinds.getD k 0 + 1)
+    if ci.isUnsafe then flagged := flagged.push s!"unsafe {n}"
+    if ci.isPartial then flagged := flagged.push s!"partial {n}"
+    if k == "axiom" || k == "opaque" then flagged := flagged.push s!"{k} {n}"
+    if (Compiler.getImplementedBy? env n).isSome then flagged := flagged.push s!"implemented_by {n}"
+    if isExtern env n then flagged := flagged.push s!"extern {n}"
+  -- own shared-cache traversal of the transitive closure of ALL local constants (local + imported)
+  let mut visited : NameSet := {}
+  let mut axs : NameSet := {}
+  let mut stack : Array Name := ns
+  while h : stack.size > 0 do
+    let c := stack.back
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    match env.find? c with
+    | some (.axiomInfo v) => axs := axs.insert c; stack := stack ++ v.type.getUsedConstants
+    | some (.defnInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.value.getUsedConstants
+    | some (.thmInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.value.getUsedConstants
+    | some (.opaqueInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.value.getUsedConstants
+    | some (.ctorInfo v) => stack := stack ++ v.type.getUsedConstants
+    | some (.recInfo v) => stack := stack ++ v.type.getUsedConstants
+    | some (.inductInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.ctors.toArray
+    | _ => pure ()
+  logInfo m!"AUDIT_ENUM total_local_constants={ns.size} transitive_closure_size={visited.size} kinds={kinds.toList} flagged={flagged} axioms_in_closure_of_ALL_local_constants={axs.toList}"

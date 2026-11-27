@@ -1,0 +1,68 @@
+== Green19.green_19.standalone.lean sha256 4032046c1b6f4916311301822d867c44b2a6848f705be94ed26214b03733036d raw_lines 6975 stripped_nonblank_lines 6676
+  sorry                            0 
+  admit                            0 
+  native_decide                    0 
+  ofReduceBool                     0 
+  trustCompiler                    0 
+  implemented_by                   0 
+  extern                           0 
+  unsafe                           0 
+  axiom_decl                       0 
+  opaque                           0 
+  partial                          0 
+  decide_native                    0 
+  decide_kernel                    0 
+  csimp                            0 
+  macro/syntax/elab                0 
+  initialize                       0 
+  run_cmd/run_elab/#eval           0 
+  sorryAx                          0 
+  set_option_any                   0 
+  maxHeartbeats                    0 
+  maxRecDepth                      0 
+  import                           1 [1]
+  attribute_simp_local             0 
+  private_decl                   162 ([73, 241, 355, 432, 437, 440], '...')
+  irreducible_def                  0 
+  noncomputable                   20 ([41, 58, 457, 725, 806, 1006], '...')
+  open_classical                  29 ([42, 1511, 1536, 1546, 1552, 1558], '...')
+  sorry-like: aesop?               0 
+  omega                           43 ([634, 1821, 1943, 2477, 4598, 4611], '...')
+  decide                          14 ([438, 2731, 2732, 2734, 2735, 2737], '...')
+  simp_all                         0 
+  native                           0 
+  distinct set_option lines: []
+== Green19.green_19.lean sha256 30dfe0c581913817fc3f2feeb25b0cad7d080c5c54a384b4040236a2ebf6f9ee raw_lines 7001 stripped_nonblank_lines 6698
+  sorry                            0 
+  admit                            0 
+  native_decide                    0 
+  ofReduceBool                     0 
+  trustCompiler                    0 
+  implemented_by                   0 
+  extern                           0 
+  unsafe                           0 
+  axiom_decl                       0 
+  opaque                           0 
+  partial                          0 
+  decide_native                    0 
+  decide_kernel                    0 
+  csimp                            0 
+  macro/syntax/elab                0 
+  initialize                       0 
+  run_cmd/run_elab/#eval           0 
+  sorryAx                          0 
+  set_option_any                   0 
+  maxHeartbeats                    0 
+  maxRecDepth                      0 
+  import                           2 [1, 2]
+  attribute_simp_local             0 
+  private_decl                   162 ([58, 226, 340, 417, 422, 425], '...')
+  irreducible_def                  0 
+  noncomputable                   20 ([26, 43, 442, 710, 791, 991], '...')
+  open_classical                  29 ([27, 1496, 1521, 1531, 1537, 1543], '...')
+  sorry-like: aesop?               0 
+  omega                           43 ([619, 1806, 1928, 2462, 4583, 4596], '...')
+  decide                          14 ([423, 2716, 2717, 2719, 2720, 2722], '...')
+  simp_all                         0 
+  native                           0 
+  distinct set_option lines: []

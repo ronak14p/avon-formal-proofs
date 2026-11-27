@@ -1,0 +1,156 @@
+
+/- ===== AUDIT FOOTER A (appended by the auditor; not part of the published file) ===== -/
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let ns : Array Name := (env.constants.map₂.toList.map (·.1)).toArray
+  let mut kinds : Std.HashMap String Nat := {}
+  let mut flagged : Array String := #[]
+  for n in ns do
+    let some ci := env.find? n | continue
+    let k := match ci with
+      | .axiomInfo _ => "axiom" | .defnInfo _ => "def" | .thmInfo _ => "theorem"
+      | .opaqueInfo _ => "opaque" | .quotInfo _ => "quot" | .inductInfo _ => "inductive"
+      | .ctorInfo _ => "ctor" | .recInfo _ => "rec"
+    kinds := kinds.insert k (kinds.getD k 0 + 1)
+    if ci.isUnsafe then flagged := flagged.push s!"unsafe {n}"
+    if ci.isPartial then flagged := flagged.push s!"partial {n}"
+    if k == "axiom" || k == "opaque" then flagged := flagged.push s!"{k} {n}"
+    if (Compiler.getImplementedBy? env n).isSome then flagged := flagged.push s!"implemented_by {n}"
+    if isExtern env n then flagged := flagged.push s!"extern {n}"
+  -- own shared-cache traversal of the transitive closure of ALL local constants (local + imported)
+  let mut visited : NameSet := {}
+  let mut axs : NameSet := {}
+  let mut stack : Array Name := ns
+  while h : stack.size > 0 do
+    let c := stack.back
+    stack := stack.pop
+    if visited.contains c then continue
+    visited := visited.insert c
+    match env.find? c with
+    | some (.axiomInfo v) => axs := axs.insert c; stack := stack ++ v.type.getUsedConstants
+    | some (.defnInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.value.getUsedConstants
+    | some (.thmInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.value.getUsedConstants
+    | some (.opaqueInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.value.getUsedConstants
+    | some (.ctorInfo v) => stack := stack ++ v.type.getUsedConstants
+    | some (.recInfo v) => stack := stack ++ v.type.getUsedConstants
+    | some (.inductInfo v) => stack := stack ++ v.type.getUsedConstants ++ v.ctors.toArray
+    | _ => pure ()
+  logInfo m!"AUDIT_ENUM total_local_constants={ns.size} transitive_closure_size={visited.size} kinds={kinds.toList} flagged={flagged} axioms_in_closure_of_ALL_local_constants={axs.toList}"
+
+/- ===== AUDIT FOOTER B (appended by the auditor; not part of the published file) ===== -/
+open Lean in
+partial def auditEraseBN : Expr → Expr
+  | .lam _ t b bi => .lam .anonymous (auditEraseBN t) (auditEraseBN b) bi
+  | .forallE _ t b bi => .forallE .anonymous (auditEraseBN t) (auditEraseBN b) bi
+  | .letE _ t v b nd => .letE .anonymous (auditEraseBN t) (auditEraseBN v) (auditEraseBN b) nd
+  | .app f a => .app (auditEraseBN f) (auditEraseBN a)
+  | .mdata _ e => auditEraseBN e
+  | .proj s i e => .proj s i (auditEraseBN e)
+  | e => e
+
+open Lean Elab Command in
+#eval show CommandElabM Unit from do
+  let env ← getEnv
+  let ren : Expr → Expr := fun e => e.replace fun
+    | .const n ls =>
+        if (`StandaloneGreen19).isPrefixOf n then
+          some (.const (n.replacePrefix `StandaloneGreen19 `Green19) ls)
+        else none
+    | _ => none
+  -- (1) statement types: bridge theorems vs upstream theorems
+  for (a, b) in [(``upstream_green_19, ``Green19.green_19),
+                 (``upstream_green_19_lower, ``Green19.green_19.lower),
+                 (``upstream_green_19_upper, ``Green19.green_19.upper)] do
+    match env.find? a, env.find? b with
+    | some ca, some cb =>
+      logInfo m!"EXPRCHK type {a} vs {b}: beq={ca.type == cb.type} strict-equal={Expr.equal ca.type cb.type} hashes={ca.type.hash},{cb.type.hash} bridge-is-theorem={ca.isTheorem} upstream-is-theorem={cb.isTheorem}"
+      match ca with
+      | .thmInfo v => logInfo m!"EXPRCHK proof term of {a} := {v.value}"
+      | _ => logInfo m!"EXPRCHK {a} is not a theorem"
+    | _, _ => logInfo m!"EXPRCHK MISSING {a} or {b}"
+  -- (2) definitions: standalone copy vs upstream (after renaming the namespace prefix); also modulo binder names
+  for n in [`IsCorner, `S, `ValidExponent, `C] do
+    match env.find? (`StandaloneGreen19 ++ n), env.find? (`Green19 ++ n) with
+    | some ca, some cb =>
+      let tyeq := ren ca.type == cb.type
+      let tyeq2 := Expr.equal (auditEraseBN (ren ca.type)) (auditEraseBN cb.type)
+      let valeq : String := match ca.value?, cb.value? with
+        | some x, some y => s!"beq={ren x == y} equal-mod-binder-names={Expr.equal (auditEraseBN (ren x)) (auditEraseBN y)}"
+        | _, _ => "n/a"
+      logInfo m!"EXPRCHK def {n}: type beq={tyeq} equal-mod-binder-names={tyeq2}; value {valeq}; upstream value present={cb.value?.isSome}"
+    | _, _ => logInfo m!"EXPRCHK def {n}: MISSING one side"
+
+set_option pp.numericTypes true in
+#print Green19.ValidExponent
+set_option pp.numericTypes true in
+#print StandaloneGreen19.ValidExponent
+#print Green19.C
+#print StandaloneGreen19.C
+#print Green19.S
+#print StandaloneGreen19.S
+#print Green19.IsCorner
+#print StandaloneGreen19.IsCorner
+#check @Green19.green_19
+#check @upstream_green_19
+
+section AuditWitnesses
+
+theorem audit_valid_set_eq : {c : ℝ | Green19.ValidExponent c} = Set.Ici 4 := by
+  ext c
+  exact StandaloneGreen19.validExponent_iff c
+
+theorem audit_isLeast : IsLeast {c : ℝ | Green19.ValidExponent c} 4 :=
+  ⟨(StandaloneGreen19.validExponent_iff 4).mpr le_rfl,
+   fun c hc => (StandaloneGreen19.validExponent_iff c).mp hc⟩
+
+theorem audit_nonempty : ({c : ℝ | Green19.ValidExponent c}).Nonempty := ⟨4, audit_isLeast.1⟩
+
+theorem audit_bddBelow : BddBelow {c : ℝ | Green19.ValidExponent c} := ⟨4, audit_isLeast.2⟩
+
+theorem audit_C_eq_four_via_Ici : Green19.C = 4 := by
+  unfold Green19.C
+  rw [audit_valid_set_eq]
+  exact csInf_Ici
+
+theorem audit_not_valid {c : ℝ} (hc : c < 4) : ¬ Green19.ValidExponent c :=
+  fun h => absurd ((StandaloneGreen19.validExponent_iff c).mp h) (not_le.mpr hc)
+
+theorem audit_valid {c : ℝ} (hc : 4 ≤ c) : Green19.ValidExponent c :=
+  (StandaloneGreen19.validExponent_iff c).mpr hc
+
+example : ¬ Green19.ValidExponent 0 := audit_not_valid (by norm_num)
+example : ¬ Green19.ValidExponent (-1) := audit_not_valid (by norm_num)
+example : ¬ Green19.ValidExponent 1 := audit_not_valid (by norm_num)
+example : ¬ Green19.ValidExponent 3 := audit_not_valid (by norm_num)
+example : ¬ Green19.ValidExponent 3.13 := audit_not_valid (by norm_num)
+example : ¬ Green19.ValidExponent 3.9999 := audit_not_valid (by norm_num)
+example : Green19.ValidExponent 4 := audit_valid (by norm_num)
+example : Green19.ValidExponent 4.0001 := audit_valid (by norm_num)
+example : Green19.ValidExponent 100 := audit_valid (by norm_num)
+
+-- C is a minimum (attained), not merely an infimum
+example : Green19.C ∈ {c : ℝ | Green19.ValidExponent c} := by
+  rw [audit_C_eq_four_via_Ici]; exact audit_isLeast.1
+
+-- Why `∀ᶠ n` is needed in the definition: for n = 0 the group 𝔽₂ 0 has no nonzero d.
+example : ¬ ∃ d : 𝔽₂ 0, d ≠ 0 := by
+  rintro ⟨d, hd⟩
+  exact hd (Subsingleton.elim _ _)
+
+-- Hypothesis of ValidExponent is satisfiable (A = univ has card N^2 >= alpha N^2), so the ∀ A is not vacuous
+example (n : ℕ) (α : ℝ) (hα : α < 1) :
+    ((Finset.univ : Finset (𝔽₂ n × 𝔽₂ n)).card : ℝ) ≥ α * (Fintype.card (𝔽₂ n) : ℝ) ^ 2 := by
+  have hN : (0 : ℝ) < (Fintype.card (𝔽₂ n) : ℝ) := by exact_mod_cast Fintype.card_pos
+  have : ((Finset.univ : Finset (𝔽₂ n × 𝔽₂ n)).card : ℝ) = (Fintype.card (𝔽₂ n) : ℝ) ^ 2 := by
+    simp [Finset.card_univ, Fintype.card_prod, sq]
+  rw [this]
+  nlinarith [sq_nonneg (Fintype.card (𝔽₂ n) : ℝ), mul_pos hN hN]
+
+end AuditWitnesses
+
+#print axioms audit_valid_set_eq
+#print axioms audit_isLeast
+#print axioms audit_C_eq_four_via_Ici
+#print axioms audit_not_valid
+#print axioms audit_valid
