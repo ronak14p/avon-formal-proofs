@@ -1,0 +1,19 @@
+Avon Labs Formal Proofs
+Copyright 2026 Ronak Patel / Avon Labs
+
+This product includes software and Lean 4 formalizations developed by
+Ronak Patel / Avon Labs (https://github.com/ronak14p/avon-formal-proofs),
+licensed under the Apache License, Version 2.0.
+
+Third-Party Attributions:
+1. Formal statement definitions imported by these proofs originate from
+   Google DeepMind's `formal-conjectures` repository
+   (https://github.com/google-deepmind/formal-conjectures),
+   licensed under the Apache License, Version 2.0.
+2. `proofs/Constant6a.c6a_lower_bound_first.lean` adapts the scalar entropy
+   inequality from `https://github.com/boonsuan/entropy-inequality` by
+   Ho Boon Suan and Aristotle (Harmonic), Copyright (c) 2026 ho boon suan,
+   licensed under the MIT License (full notice retained inside the file).
+3. Underlying mathematical theorems, bounds, and counterexample constructions
+   belong to their respective original authors, cited in each proof header
+   and in `paper/Avon-Labs-Lean4-Formalizations-2026-11-27.pdf`.
