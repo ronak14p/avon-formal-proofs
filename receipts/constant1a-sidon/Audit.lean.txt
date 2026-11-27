@@ -1,0 +1,47 @@
+/- G1: enumerate every constant defined in module Constant1aLocal and collect its axioms. -/
+import Constant1aLocal
+open Lean Meta Elab
+
+#eval show MetaM Unit from do
+  let env ← getEnv
+  let some idx := env.getModuleIdx? `Constant1aLocal | throwError "module not found"
+  let allowed : List Name := [``propext, ``Classical.choice, ``Quot.sound]
+  let mut total := 0
+  let mut kinds : Std.HashMap String Nat := {}
+  let mut axsets : Std.HashMap String Nat := {}
+  let mut bad : Array String := #[]
+  let mut flagged : Array String := #[]
+  for (nm, ci) in env.constants.map₁.toList do
+    if env.getModuleIdxFor? nm == some idx then
+      total := total + 1
+      let k := match ci with
+        | .axiomInfo _ => "axiom" | .defnInfo _ => "def" | .thmInfo _ => "theorem" | .opaqueInfo _ => "opaque"
+        | .quotInfo _ => "quot" | .inductInfo _ => "inductive" | .ctorInfo _ => "ctor" | .recInfo _ => "rec"
+      kinds := kinds.insert k (kinds.getD k 0 + 1)
+      if ci.isUnsafe || ci.isPartial then flagged := flagged.push s!"{nm} unsafe/partial"
+      if (Compiler.getImplementedBy? env nm).isSome then flagged := flagged.push s!"{nm} implemented_by"
+      if isExtern env nm then flagged := flagged.push s!"{nm} extern"
+      let axs ← collectAxioms nm
+      let key := toString (axs.qsort (·.toString < ·.toString))
+      axsets := axsets.insert key (axsets.getD key 0 + 1)
+      for a in axs do
+        if !allowed.contains a then bad := bad.push s!"{nm} uses {a}"
+  IO.println s!"constants in module: {total}"
+  IO.println s!"by kind: {kinds.toList}"
+  IO.println s!"distinct axiom sets: {axsets.toList}"
+  IO.println s!"nonstandard axiom uses: {bad.size} {bad.toList.take 20}"
+  IO.println s!"flagged (unsafe/partial/implemented_by/extern): {flagged.size} {flagged.toList.take 20}"
+
+-- named headline theorems
+#print axioms Constant1aProof.c1a_ge_of_sos_certificate
+#print axioms Constant1aProof.c1a_ge_cert80_exact
+#print axioms Constant1aProof.c1a_ge_12976
+#print axioms Constant1aProof.c1a_lower_bound
+#print axioms Constant1aProof.mem_Ioc_c1a
+#print axioms Constant1aProof.c1a_le_1521
+#print axioms Constant1aProof.c1a_lt_pi_div_two
+#print axioms Constant1aProof.c1a_set_bddAbove
+#print axioms Constant1aProof.one_le_c1a
+#print axioms Constant1aProof.c1a_le_two
+#print axioms Constant1aProof.isSidonFinset_card_sq_le
+#print axioms Constant1aProof.c1a_mul_card_sq_le_two_mul_g_sidon

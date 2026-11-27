@@ -101,6 +101,18 @@ lake env lean -D autoImplicit=false -D relaxedAutoImplicit=false proofs/Green95.
 
 ---
 
+## Tier 2 (release `v1.3.0-tier2`): MathOverflow 508539, Kourovka 20.75/20.76, Sidon autocorrelation constant C1a
+
+| Paper | Lean files | What is proved | Prior work |
+|---|---|---|---|
+| [*A Kernel-Checked Elementary Proof of the Half-Size Edge-Vertex Boundary Inequality on the Hamming Cube (MathOverflow 508539)*](paper/Kernel-Checked-Hypercube-Edge-Vertex-Inequality-MO508539-2026-11-27.pdf) (7 pages; sha256 `fdb57ae22eccf6421316528fa1aa781a4ad0e4a6367ff2797bdd780b84e6dd82`) | [`proofs/Mathoverflow508539.mathoverflow_508539.lean`](proofs/Mathoverflow508539.mathoverflow_508539.lean) (unchanged since v1.0.0) | For `A ⊆ {0,1}^n` with `|A| = 2^(n-1)`: `|∂_E A| · |∂_V A| ≥ 4^(n-1)`, the formal-conjectures statement `Mathoverflow508539.mathoverflow_508539`, by an elementary fibre induction. | This file was merged in open-math-agents PR #2945; the note discusses the literature on the inequality. |
+| [*A Lean 4 Verification of a 2^141 Counterexample to Kourovka Notebook Problems 20.75 and 20.76*](paper/Lean4-Kourovka-20-75-20-76-2026-11-27-v3.pdf) (11 pages, version 3; sha256 `2e1d7144acfa0d943a142e4dbed9892aef521d55e156676f8e5590d32ced2266`) | [`proofs/Kourovka.20_76.kourovka_20_76.lean`](proofs/Kourovka.20_76.kourovka_20_76.lean) (Mathlib only), [`proofs/Kourovka.20_76.bridge.lean`](proofs/Kourovka.20_76.bridge.lean) (imports `FormalConjectures.Kourovka.«20_76»`; `upstream_type_match : type_of% @Kourovka.«20.76».kourovka_20_76`) | A 2-group of order `2^141` with all abelian normal subgroups of order at most `2^80` but an abelian subgroup of order `2^81`, refuting Pyber's Problems 20.75 and 20.76; quadratic upper bound; no linear exponent bound. | Muliarchyk resolved both problems (order `2^145`); `2^141` is a re-parametrization of his construction. A Lean proof of `kourovka_20_76` was merged earlier in open-math-agents PR #2860 (another contributor). |
+| [*A Kernel-Checked Lean 4 Lower Bound C1a ≥ 1.2976 for Tao's Sidon Autocorrelation Constant*](paper/Kernel-Checked-Sidon-Autocorrelation-C1a-2026-11-27.pdf) (8 pages; sha256 `d483ee47283a326a4ef2f3cb1544ccf77417cb971d0b433a85098d7564e38dc4`) | [`proofs/Constant1a.c1a_lower_bound.lean`](proofs/Constant1a.c1a_lower_bound.lean) (Mathlib only), [`proofs/Constant1a.c1a_lower_bound.bridge.lean`](proofs/Constant1a.c1a_lower_bound.bridge.lean) (imports the upstream module and the development compiled as module `Constant1aLocal`) | `C1a ≥ 4055172655215574821001279/3125000000000000000000000 > 1.2976` via an exactly checked sum-of-squares certificate, for the formal-conjectures constant `Constant1a.C1a`; also `C1a ≤ 1.521 < π/2`. | Not a record: a preprint (Tomar) claims `C1a ≥ 1.337`; open-math-agents PR #3757 proves `1.286`. |
+
+**Provenance.** All Lean files were written by AI agents and audited by AI agents (clean compile, axioms, statement fidelity, paper-to-Lean correspondence); the notes are AI-assisted; no human has reviewed them line by line. All declarations depend only on `propext`, `Classical.choice`, `Quot.sound`. Receipts: [`receipts/mo-508539/`](receipts/mo-508539/), [`receipts/kourovka-20-76/`](receipts/kourovka-20-76/), [`receipts/constant1a-sidon/`](receipts/constant1a-sidon/). The Kourovka files differ from the audited ones only in documentation comments and were recompiled on 2026-11-27 (finished 1:40 PM ET); the other files are byte-identical to the audited ones. Nothing here has been submitted to `formal-conjectures`.
+
+---
+
 ## Independent Verification
 
 1. Verify file integrity against the published manifest:

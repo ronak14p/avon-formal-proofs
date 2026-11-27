@@ -1,0 +1,66 @@
+--- audited/Kourovka20_76.lean (sha256 56d598af...)
++++ published/Kourovka.20_76.kourovka_20_76.lean
+@@ -22,8 +22,8 @@
+ 
+ /-!
+ # Abelian Subgroups and Abelian Normal Subgroups in Finite `p`-Groups:
+-# Resolution of Kourovka Problems 20.75 and 20.76, `Θ(k^2)` Extremal Asymptotics,
+-# and an Improved `2^141` Counterexample
++# Counterexamples to Kourovka Problems 20.75 and 20.76 (after Muliarchyk), `Θ(k^2)` Asymptotics,
++# and a `2^141` Re-parametrization of Muliarchyk's Construction
+ 
+ This standalone Lean 4 file develops both the positive structural bounds and the negative
+ counterexample theory for Pyber's twin problems in *The Kourovka Notebook* (20th ed., 2022,
+@@ -43,10 +43,10 @@
+    constructs `G(n, z₀, M) = M(f) ⋊ C₂` of order `2 ^ (2n + 2z₀ + 1)` and exact nilpotency class `4`
+    (when `ω M ≠ 0`), bounding all abelian normal subgroups by `2 ^ (2(d - 1) + 2z₀)` while
+    exhibiting an elementary abelian subgroup of order `2 ^ (n + 2z₀)`.
+-4. **Improved `2^141` Counterexample & Twin Kourovka Resolutions (`exists_counterexample_two_pow_141`,
++4. **`2^141` Counterexample to Both Kourovka Problems (`exists_counterexample_two_pow_141`,
+    `exists_counterexample_two_pow_145`, `kourovka_20_76`, `kourovka_20_75`)**: Specializing
+    `(n, z₀, d) = (59, 11, 10)` gives a counterexample of order `2 ^ 141` (`k = 40`,
+-   `|B₁| = 2 ^ 81 > 2 ^ 80`), improving Muliarchyk's `2 ^ 145` benchmark by `16×` and refuting both
++   `|B₁| = 2 ^ 81 > 2 ^ 80`), a re-parametrization of Muliarchyk's `2 ^ 145` construction, refuting both
+    Kourovka 20.76 and Kourovka 20.75.
+ 5. **Exact `Θ(k^2)` Extremal Separation (`no_linear_exponent_bound`)**: Refutes any linear exponent
+    bound `2 ^ (C * k)` for every `C : ℕ`, matching Burnside's `O(k^2)` bound up to a constant factor.
+--- audited/Check.lean (sha256 9210c39f...)
++++ published/Kourovka.20_76.bridge.lean
+@@ -23,8 +23,8 @@
+ 
+ /-!
+ # Abelian Subgroups and Abelian Normal Subgroups in Finite `p`-Groups:
+-# Resolution of Kourovka Problems 20.75 and 20.76, `Θ(k^2)` Extremal Asymptotics,
+-# and an Improved `2^141` Counterexample
++# Counterexamples to Kourovka Problems 20.75 and 20.76 (after Muliarchyk), `Θ(k^2)` Asymptotics,
++# and a `2^141` Re-parametrization of Muliarchyk's Construction
+ 
+ This standalone Lean 4 file develops both the positive structural bounds and the negative
+ counterexample theory for Pyber's twin problems in *The Kourovka Notebook* (20th ed., 2022,
+@@ -44,10 +44,10 @@
+    constructs `G(n, z₀, M) = M(f) ⋊ C₂` of order `2 ^ (2n + 2z₀ + 1)` and exact nilpotency class `4`
+    (when `ω M ≠ 0`), bounding all abelian normal subgroups by `2 ^ (2(d - 1) + 2z₀)` while
+    exhibiting an elementary abelian subgroup of order `2 ^ (n + 2z₀)`.
+-4. **Improved `2^141` Counterexample & Twin Kourovka Resolutions (`exists_counterexample_two_pow_141`,
++4. **`2^141` Counterexample to Both Kourovka Problems (`exists_counterexample_two_pow_141`,
+    `exists_counterexample_two_pow_145`, `kourovka_20_76`, `kourovka_20_75`)**: Specializing
+    `(n, z₀, d) = (59, 11, 10)` gives a counterexample of order `2 ^ 141` (`k = 40`,
+-   `|B₁| = 2 ^ 81 > 2 ^ 80`), improving Muliarchyk's `2 ^ 145` benchmark by `16×` and refuting both
++   `|B₁| = 2 ^ 81 > 2 ^ 80`), a re-parametrization of Muliarchyk's `2 ^ 145` construction, refuting both
+    Kourovka 20.76 and Kourovka 20.75.
+ 5. **Exact `Θ(k^2)` Extremal Separation (`no_linear_exponent_bound`)**: Refutes any linear exponent
+    bound `2 ^ (C * k)` for every `C : ℕ`, matching Burnside's `O(k^2)` bound up to a constant factor.
+@@ -2159,11 +2159,11 @@
+ 
+ end Kourovka20_76
+ 
+-/-! ## Appended by the audit (not part of the lane file) -/
++/-! ## Bridge to the formal-conjectures statement (appended by the audit) -/
+ set_option pp.numericTypes true
+ set_option pp.fieldNotation false
+ 
+-/-- The upstream statement is proved by the lane's theorem: the lane theorem has exactly the upstream type. -/
++/-- The upstream statement is proved by the standalone theorem, which has exactly the upstream type. -/
+ theorem upstream_type_match : type_of% @Kourovka.«20.76».kourovka_20_76 :=
+   @Kourovka20_76.kourovka_20_76
+ 

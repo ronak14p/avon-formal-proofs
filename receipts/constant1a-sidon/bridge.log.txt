@@ -1,0 +1,46 @@
+Bridge.lean:12:0: warning: This file has no module docstring (`/-! ... -/`). Add one after the imports to document the file.
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Bridge.lean:27:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Bridge.lean:50:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Bridge.lean:65:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+bridge_c1a_lower_bound : 1.2748 ≤ Constant1a.C1a
+Constant1a.c1a_lower_bound : 1.2748 ≤ Constant1a.C1a
+bridge_c1a_ge_cert80 : 4055172655215574821001279 / 3125000000000000000000000 ≤ Constant1a.C1a
+bridge_exists_mem_Ioc : ∃ a, a ∈ Ioc 1.292 Constant1a.C1a
+bridge_c1a_le_1521 : Constant1a.C1a ≤ 1521 / 1000
+C1a bodies: beq (eqv) = false; strict Expr.equal = false; types eqv = true
+upstream body:
+sSup
+  {C |
+    ∀ ⦃f : ℝ → ℝ⦄,
+      0 ≤ f →
+        MemLp f 2 volume →
+          C * (∫ (x : ℝ) in -1 / 4..1 / 4, f x) ^ 2 ≤
+            sSup {x | ∃ t ∈ Icc (-1 / 2) (1 / 2), ∫ (x : ℝ), f (t - x) * f x = x}}
+local body:
+sSup
+  {C |
+    ∀ ⦃f : ℝ → ℝ⦄,
+      0 ≤ f →
+        MemLp f 2 volume →
+          C * (∫ (x : ℝ) in -1 / 4..1 / 4, f x) ^ 2 ≤
+            sSup {x | ∃ t ∈ Icc (-1 / 2) (1 / 2), ∫ (x : ℝ), f (t - x) * f x = x}}
+'bridge_C1a_def_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_c1a_lower_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_c1a_ge_cert80' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_c1a_ge_12976' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_exists_mem_Ioc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_c1a_le_1521' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_c1a_lt_pi_div_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_set_bddAbove' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_one_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_le_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'bridge_inner_bddAbove' depends on axioms: [propext, Classical.choice, Quot.sound]
+EXIT_CODE=0

@@ -1,0 +1,18 @@
+constants in module: 633
+by kind: [(inductive, 1), (ctor, 1), (def, 226), (theorem, 404), (rec, 1)]
+distinct axiom sets: [(#[Quot.sound, propext], 109), (#[Classical.choice, Quot.sound, propext], 212), (#[], 245), (#[propext], 67)]
+nonstandard axiom uses: 0 []
+flagged (unsafe/partial/implemented_by/extern): 15 [Constant1aProof.checkAlphaListMatch._unsafe_rec unsafe/partial, Constant1aProof.sumNatLoop._unsafe_rec unsafe/partial, Constant1aProof.checkCellRange._unsafe_rec unsafe/partial, Constant1aProof.sumTermsAux._unsafe_rec unsafe/partial, Constant1aProof.listGetZ._unsafe_rec unsafe/partial, Constant1aProof.sumDots._unsafe_rec unsafe/partial, Constant1aProof.checkBandRange._unsafe_rec unsafe/partial, Constant1aProof.dotList._unsafe_rec unsafe/partial, Constant1aProof.dropNat._unsafe_rec unsafe/partial, Constant1aProof.listAtNat._unsafe_rec unsafe/partial, Constant1aProof.checkCosTail._unsafe_rec unsafe/partial, Constant1aProof.convLoop._unsafe_rec unsafe/partial, Constant1aProof.checkConvRange._unsafe_rec unsafe/partial, Constant1aProof.checkAlphaTail._unsafe_rec unsafe/partial, Constant1aProof.cellSum._unsafe_rec unsafe/partial]
+'Constant1aProof.c1a_ge_of_sos_certificate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_ge_cert80_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_ge_12976' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_lower_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.mem_Ioc_c1a' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_le_1521' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_lt_pi_div_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_set_bddAbove' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.one_le_c1a' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_le_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.isSidonFinset_card_sq_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Constant1aProof.c1a_mul_card_sq_le_two_mul_g_sidon' depends on axioms: [propext, Classical.choice, Quot.sound]
+EXIT_CODE=0

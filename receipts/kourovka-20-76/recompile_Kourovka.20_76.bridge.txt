@@ -1,0 +1,193 @@
+Kourovka.20_76.bridge.lean:2162:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Kourovka.«20.76».kourovka_20_76 : ¬∀ (p : ℕ),
+    Nat.Prime p →
+      ∀ (G : Type) (x : Group G),
+        IsPGroup p G →
+          Finite G →
+            ∀ (k : ℕ),
+              (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ k) →
+                ∀ (H : Subgroup G), IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ ((2 : ℕ) * k)
+Kourovka20_76.kourovka_20_76 : ¬∀ (p : ℕ),
+    Nat.Prime p →
+      ∀ (G : Type) (x : Group G),
+        IsPGroup p G →
+          Finite G →
+            ∀ (k : ℕ),
+              (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ k) →
+                ∀ (H : Subgroup G), IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ ((2 : ℕ) * k)
+Kourovka20_76.kourovka_20_75 : ¬∀ (p : ℕ),
+    Nat.Prime p →
+      ∀ (G : Type) (x : Group G),
+        IsPGroup p G →
+          Finite G →
+            ∀ (k : ℕ),
+              (∀ (H : Subgroup G),
+                  Subgroup.Normal H ∧ IsMulCommutative ↥H → ∃ S, Finset.card S ≤ k ∧ Subgroup.closure ↑S = H) →
+                ∀ (H : Subgroup G), IsMulCommutative ↥H → ∃ S, Finset.card S ≤ (2 : ℕ) * k ∧ Subgroup.closure ↑S = H
+Kourovka20_76.exists_counterexample_two_pow_141 : ∃ G x x_1,
+  IsPGroup (2 : ℕ) G ∧
+    Nat.card G = (2 : ℕ) ^ (141 : ℕ) ∧
+      (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ (2 : ℕ) ^ (40 : ℕ)) ∧
+        ∃ B, IsMulCommutative ↥B ∧ (∀ x_2 ∈ B, x_2 ^ (2 : ℕ) = (1 : G)) ∧ Nat.card ↥B = (2 : ℕ) ^ (81 : ℕ)
+Kourovka20_76.exists_counterexample_two_pow_145 : ∃ G x x_1,
+  IsPGroup (2 : ℕ) G ∧
+    Nat.card G = (2 : ℕ) ^ (145 : ℕ) ∧
+      (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ (2 : ℕ) ^ (42 : ℕ)) ∧
+        ∃ B, IsMulCommutative ↥B ∧ (∀ x_2 ∈ B, x_2 ^ (2 : ℕ) = (1 : G)) ∧ Nat.card ↥B = (2 : ℕ) ^ (85 : ℕ)
+Kourovka20_76.exists_counterexample_family : ∀ (n z₀ d : ℕ),
+  (1 : ℕ) ≤ d →
+    d ≤ n →
+      ∏ i ∈ Finset.range d, ((2 : ℕ) ^ n - (2 : ℕ) ^ i) <
+          (∏ i ∈ Finset.range d, ((2 : ℕ) ^ d - (2 : ℕ) ^ i)) * (2 : ℕ) ^ (z₀ * (d * (d - (1 : ℕ)) / (2 : ℕ))) →
+        ∃ G x x_1,
+          IsPGroup (2 : ℕ) G ∧
+            Nat.card G = (2 : ℕ) ^ ((2 : ℕ) * n + (2 : ℕ) * z₀ + (1 : ℕ)) ∧
+              (∀ (H : Subgroup G),
+                  Subgroup.Normal H ∧ IsMulCommutative ↥H →
+                    Nat.card ↥H ≤ (2 : ℕ) ^ ((2 : ℕ) * (d - (1 : ℕ)) + (2 : ℕ) * z₀)) ∧
+                ∃ B,
+                  IsMulCommutative ↥B ∧
+                    (∀ x_2 ∈ B, x_2 ^ (2 : ℕ) = (1 : G)) ∧ Nat.card ↥B = (2 : ℕ) ^ (n + (2 : ℕ) * z₀)
+Kourovka20_76.no_linear_exponent_bound : ∀ (C : ℕ),
+  ∃ G x,
+    ∃ (_ : Finite G),
+      ∃ k,
+        IsPGroup (2 : ℕ) G ∧
+          (1 : ℕ) ≤ k ∧
+            (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ (2 : ℕ) ^ k) ∧
+              ∃ B, IsMulCommutative ↥B ∧ (2 : ℕ) ^ (C * k) < Nat.card ↥B
+@Kourovka20_76.pyber_bound_of_nilpotencyClass_le_two : ∀ {p : ℕ} (G : Type u_1) [inst : Group G] [Finite G]
+  [Group.IsNilpotent G],
+  Group.nilpotencyClass G ≤ (2 : ℕ) →
+    ∀ (k : ℕ),
+      (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ k) →
+        ∀ (B : Subgroup G), IsMulCommutative ↥B → Nat.card ↥B ≤ p ^ k
+@Kourovka20_76.abelian_card_le_of_commutator_le_center : ∀ {G : Type u_1} [inst : Group G] [Finite G],
+  commutator G ≤ Subgroup.center G →
+    ∀ {M : ℕ},
+      (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ M) →
+        ∀ (B : Subgroup G), IsMulCommutative ↥B → Nat.card ↥B ≤ M
+@Kourovka20_76.card_group_le_pow_quadratic : ∀ {p : ℕ},
+  Nat.Prime p →
+    ∀ (G : Type u_1) [inst : Group G] [Finite G],
+      IsPGroup p G →
+        ∀ (k : ℕ),
+          (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ k) →
+            Nat.card G ≤ p ^ (k * (k + (1 : ℕ)) / (2 : ℕ))
+@Kourovka20_76.abelian_card_le_pow_quadratic : ∀ {p : ℕ},
+  Nat.Prime p →
+    ∀ (G : Type u_1) [inst : Group G] [Finite G],
+      IsPGroup p G →
+        ∀ (k : ℕ),
+          (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ k) →
+            ∀ (B : Subgroup G), Nat.card ↥B ≤ p ^ (k * (k + (1 : ℕ)) / (2 : ℕ))
+@Kourovka20_76.centralizer_eq_self_of_max_normal_abelian : ∀ {p : ℕ},
+  Nat.Prime p →
+    ∀ {G : Type u_1} [inst : Group G] [Finite G],
+      IsPGroup p G →
+        ∀ (A : Subgroup G),
+          Subgroup.Normal A →
+            IsMulCommutative ↥A →
+              (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ Nat.card ↥A) →
+                Subgroup.centralizer ↑A = A
+Kourovka20_76.exists_good_M : ∀ (n z₀ d : ℕ),
+  (1 : ℕ) ≤ d →
+    d ≤ n →
+      ∏ i ∈ Finset.range d, ((2 : ℕ) ^ n - (2 : ℕ) ^ i) <
+          (∏ i ∈ Finset.range d, ((2 : ℕ) ^ d - (2 : ℕ) ^ i)) * (2 : ℕ) ^ (z₀ * (d * (d - (1 : ℕ)) / (2 : ℕ))) →
+        ∃ M,
+          ∀ (S : Submodule (ZMod (2 : ℕ)) (Kourovka20_76.W n)),
+            (∀ x ∈ S, ∀ y ∈ S, Kourovka20_76.ω M x y = (0 : Kourovka20_76.Z0 z₀)) →
+              Module.finrank (ZMod (2 : ℕ)) ↥S ≤ d - (1 : ℕ)
+@Kourovka20_76.nilpotencyClass_G76_le_four : ∀ {n z₀ : ℕ} (M : Kourovka20_76.UpperTri n z₀),
+  Group.IsNilpotent (Kourovka20_76.G76 M) ∧ Group.nilpotencyClass (Kourovka20_76.G76 M) ≤ (4 : ℕ)
+@Kourovka20_76.nilpotencyClass_G76_eq_four : ∀ {n z₀ : ℕ} (M : Kourovka20_76.UpperTri n z₀),
+  (∃ u v, Kourovka20_76.ω M u v ≠ (0 : Kourovka20_76.Z0 z₀)) → Group.nilpotencyClass (Kourovka20_76.G76 M) = (4 : ℕ)
+theorem Kourovka20_76.kourovka_20_76 : ¬∀ (p : ℕ),
+    Nat.Prime p →
+      ∀ (G : Type) (x : Group G),
+        IsPGroup p G →
+          Finite G →
+            ∀ (k : ℕ),
+              (∀ (H : Subgroup G), Subgroup.Normal H ∧ IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ k) →
+                ∀ (H : Subgroup G), IsMulCommutative ↥H → Nat.card ↥H ≤ p ^ ((2 : ℕ) * k) :=
+fun hall =>
+  Exists.casesOn Kourovka20_76.exists_counterexample_two_pow_141 fun G h =>
+    Exists.casesOn h fun w h =>
+      Exists.casesOn h fun w_1 h =>
+        And.casesOn h fun hg right =>
+          And.casesOn right fun left right =>
+            And.casesOn right fun hnorm right =>
+              Exists.casesOn right fun B h =>
+                And.casesOn h fun hBcomm right =>
+                  And.casesOn right fun left hBcard =>
+                    have hle := hall (2 : ℕ) Nat.prime_two G inferInstance hg inferInstance (40 : ℕ) hnorm B hBcomm;
+                    have hlt :=
+                      Nat.pow_lt_pow_right (of_decide_eq_true (id (Eq.refl true)))
+                        (Decidable.byContradiction fun a =>
+                          Kourovka20_76.kourovka_20_76._proof_1_1 G w B
+                            (Eq.mp (congrArg (fun _a => _a ≤ (2 : ℕ) ^ ((2 : ℕ) * (40 : ℕ))) hBcard) hle));
+                    Kourovka20_76.kourovka_20_76._proof_1_2 G w B
+                      (Eq.mp (congrArg (fun _a => _a ≤ (2 : ℕ) ^ ((2 : ℕ) * (40 : ℕ))) hBcard) hle)
+theorem Kourovka20_76.kourovka_20_75 : ¬∀ (p : ℕ),
+    Nat.Prime p →
+      ∀ (G : Type) (x : Group G),
+        IsPGroup p G →
+          Finite G →
+            ∀ (k : ℕ),
+              (∀ (H : Subgroup G),
+                  Subgroup.Normal H ∧ IsMulCommutative ↥H → ∃ S, Finset.card S ≤ k ∧ Subgroup.closure ↑S = H) →
+                ∀ (H : Subgroup G), IsMulCommutative ↥H → ∃ S, Finset.card S ≤ (2 : ℕ) * k ∧ Subgroup.closure ↑S = H :=
+fun hall =>
+  Exists.casesOn Kourovka20_76.exists_counterexample_two_pow_141 fun G h =>
+    Exists.casesOn h fun w h =>
+      Exists.casesOn h fun w_1 h =>
+        And.casesOn h fun hg right =>
+          And.casesOn right fun left right =>
+            And.casesOn right fun hnorm right =>
+              Exists.casesOn right fun B h =>
+                And.casesOn h fun hBcomm right =>
+                  And.casesOn right fun hBexp hBcard =>
+                    have hgen := fun H hH =>
+                      Kourovka20_76.exists_finset_closure_of_card_le_two_pow H (40 : ℕ) (hnorm H hH);
+                    Exists.casesOn (hall (2 : ℕ) Nat.prime_two G inferInstance hg inferInstance (40 : ℕ) hgen B hBcomm)
+                      fun S h =>
+                      And.casesOn h fun hScard hSclos =>
+                        have hSB :=
+                          Eq.mpr (id (congrArg (fun _a => ↑S ⊆ ↑_a) (Eq.symm hSclos))) Subgroup.subset_closure;
+                        have hle := Kourovka20_76.card_closure_le_two_pow_of_elem_abelian B hBcomm hBexp S hSB;
+                        have hpow := Nat.pow_le_pow_right (of_decide_eq_true (id (Eq.refl true))) hScard;
+                        have h81 :=
+                          LE.le.trans
+                            (Eq.mp (congrArg (fun _a => _a ≤ (2 : ℕ) ^ Finset.card S) hBcard)
+                              (Eq.mp (congrArg (fun _a => Nat.card ↥_a ≤ (2 : ℕ) ^ Finset.card S) hSclos) hle))
+                            hpow;
+                        have hlt :=
+                          Nat.pow_lt_pow_right (of_decide_eq_true (id (Eq.refl true)))
+                            (Decidable.byContradiction fun a =>
+                              Kourovka20_76.kourovka_20_75._proof_1_1 G w B S
+                                (Eq.mp (congrArg (fun _a => _a ≤ (2 : ℕ) ^ Finset.card S) hBcard)
+                                  (Eq.mp (congrArg (fun _a => Nat.card ↥_a ≤ (2 : ℕ) ^ Finset.card S) hSclos) hle))
+                                hpow);
+                        Kourovka20_76.kourovka_20_75._proof_1_2 G w B S
+                          (Eq.mp (congrArg (fun _a => _a ≤ (2 : ℕ) ^ Finset.card S) hBcard)
+                            (Eq.mp (congrArg (fun _a => Nat.card ↥_a ≤ (2 : ℕ) ^ Finset.card S) hSclos) hle))
+                          hpow
+'Kourovka.«20.76».kourovka_20_76' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]
+'upstream_type_match' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.kourovka_20_76' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.kourovka_20_75' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.exists_counterexample_two_pow_141' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.exists_counterexample_two_pow_145' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.exists_counterexample_family' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.no_linear_exponent_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.pyber_bound_of_nilpotencyClass_le_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.abelian_card_le_of_commutator_le_center' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.card_group_le_pow_quadratic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.abelian_card_le_pow_quadratic' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.centralizer_eq_self_of_max_normal_abelian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.exists_good_M' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.nilpotencyClass_G76_le_four' depends on axioms: [propext, Classical.choice, Quot.sound]
+'Kourovka20_76.nilpotencyClass_G76_eq_four' depends on axioms: [propext, Classical.choice, Quot.sound]

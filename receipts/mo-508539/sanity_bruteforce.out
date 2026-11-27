@@ -1,0 +1,4 @@
+n=1: subsets=4, invariant violations=0, half-size sets=2, EV<4^(n-1) violations=0, equality cases=2
+n=2: subsets=16, invariant violations=0, half-size sets=6, EV<4^(n-1) violations=0, equality cases=4
+n=3: subsets=256, invariant violations=0, half-size sets=70, EV<4^(n-1) violations=0, equality cases=6
+n=4: subsets=65536, invariant violations=0, half-size sets=12870, EV<4^(n-1) violations=0, equality cases=8

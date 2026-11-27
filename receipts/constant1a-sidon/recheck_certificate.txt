@@ -1,0 +1,23 @@
+parsed: N=80 K=65 D=100000; rows vf/vnu/vg = 31/33/31; certAlphas=66
+(1) band sums sfFn: mismatches at k = []
+(1) band sums snuFn: mismatches at k = []
+(1) band sums sgFn: mismatches at k = []
+(2) exact LDL Gram(Vf): PSD=True rank=31 (rows=31) [0s]
+(2) exact LDL Gram(Vnu): PSD=True rank=33 (rows=33) [1s]
+(2) exact LDL Gram(Vg): PSD=True rank=31 (rows=31) [0s]
+(3) mu_int = D^2 - sg(0) = 5994660440 (mu = 0.599466044); sg(0)/D^2 = 0.400533956
+    min A_k = 5143109068320 (>=0: True); negative B_k count = 28
+    alpha recomputed vs alphaFn: mismatches []
+    certAlphas list == recomputed alpha_1..alpha_66: True (len 66)
+    numConst recomputed == certNumConst: True (25958391060532052419311360)
+(4) C = 4055172655215574821001279/3125000000000000000000000 = 1.297655249669; gcd-reduced: 4055172655215574821001279/3125000000000000000000000; > 12976/10000: True; margin over 1.2976 = 5.525e-05
+    constant term numConst/(2 D^5) = 1.297919553027
+(5) grid G=250000, h=1.00e-06, M2=48.776, rigorous err=6.10e-12 [17s]
+    min grid P = 1.297908523475406 at x=0.244760;  rigorous lower bound on min_[0,1/4] P >= 1.297908523469309
+    rigorous bound >= 12976/10000: True;  vs C (exact rational, 1.29765524968...): P_min - C = 2.533e-04
+    grid local minima: 10; five smallest: [(0.24476, 1.2979085234754064), (0.215548, 1.2979107880667633), (0.199378, 1.297910986781712), (0.18785, 1.2979122183136318), (0.162696, 1.2979143575233745)]
+ALL EXACT INTEGER CHECKS PASS
+
+real	0m18.784s
+user	0m18.660s
+sys	0m0.038s

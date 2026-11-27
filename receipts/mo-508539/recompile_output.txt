@@ -1,0 +1,12 @@
+Check.lean:23:0: warning: This file has no module docstring (`/-! ... -/`). Add one after the imports to document the file.
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Check.lean:117:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+Check.lean:375:0: warning: This file has more than one module docstring (`/-! ... -/`). Only the first one is treated as module documentation; convert additional ones to regular comments (`/- ... -/`).
+
+Note: This linter can be disabled with `set_option linter.style.moduleDocstring false`
+'OMA.solution' depends on axioms: [propext, Classical.choice, Quot.sound]
+@Mathoverflow508539.mathoverflow_508539 : ∀ {n : ℕ} (A : Finset (Fin n → Bool)),
+  #A = 2 ^ (n - 1) → 0 < n → 4 ^ (n - 1) ≤ #((hypercube n).edgeBoundary A) * #((hypercube n).innerVertexBoundary A)
